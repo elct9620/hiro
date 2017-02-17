@@ -88,8 +88,6 @@ flags = [
 '/usr/local/include',
 '-DVERSION',
 '-I',
-'src/include',
-'-I',
 'deps/mruby/include',
 '-I',
 'vendor/googletest/googletest/include'
