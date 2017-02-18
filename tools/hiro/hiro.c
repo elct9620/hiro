@@ -1,10 +1,19 @@
-#include "stdio.h"
-#include "string.h"
+#include <stdio.h>
+#include <string.h>
 
-#include "mruby.h"
-#include "mruby/compile.h"
-#include "mruby/string.h"
-#include "mruby/array.h"
+#include <SDL2/SDL.h>
+
+#include <mruby.h>
+#include <mruby/compile.h>
+#include <mruby/string.h>
+#include <mruby/array.h>
+
+int prepare_game() {
+  if( SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0) {
+    return 1;
+  }
+  return 0;
+}
 
 FILE* open(const char* name) {
   if(name == NULL) {
@@ -43,6 +52,11 @@ void define_argument_const(mrb_state* mrb, int argc, char** argv) {
 }
 
 int main(int argc, char** argv) {
+  if(prepare_game()) {
+    printf("SDL initialize failed!\n");
+    return 1;
+  }
+
   mrb_state* mrb = mrb_open();
 
   define_argument_const(mrb, argc, argv);
@@ -51,7 +65,10 @@ int main(int argc, char** argv) {
 
   if(mrb->exc) {
     mrb_print_error(mrb);
+    mrb_close(mrb);
+    return 1;
   }
 
   mrb_close(mrb);
+  return 0;
 }
