@@ -17,6 +17,7 @@ mrb_value hiro_renderer_mrb_initialize(mrb_state* mrb, mrb_value self) {
 
   window = DATA_GET_PTR(mrb, win, &hiro_window_type, struct hiro_window);
 
+  // TODO: Prevent GC free Window before Renderer release
   renderer = hiro_renderer_create(mrb, window->win);
   mrb_data_init(self, renderer, &hiro_renderer_type);
 
@@ -28,18 +29,7 @@ mrb_value hiro_renderer_mrb_update(mrb_state* mrb, mrb_value self) {
 
   renderer = DATA_GET_PTR(mrb, self, &hiro_renderer_type, struct hiro_renderer);
   SDL_RenderClear(renderer->renderer);
-  // TODO: Implement Event class to handle it
-  SDL_Event ev;
-  while(SDL_PollEvent(&ev)) {
-    switch(ev.type) {
-      case SDL_QUIT:
-      case SDL_KEYDOWN:
-      case SDL_MOUSEBUTTONDOWN:
-        // TODO: Implement Game loop manager to handle it
-        mrb_raisef(mrb, E_RUNTIME_ERROR, "Force close game!");
-        break;
-    }
-  }
+  // TODO: Put renderer target draw callback at here
   SDL_RenderPresent(renderer->renderer);
 
   return self;

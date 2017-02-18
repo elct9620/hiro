@@ -1,13 +1,6 @@
 #ifndef _HIRO_WINDOW_H
 #define _HIRO_WINDOW_H
 
-#include <SDL2/SDL.h>
-
-#include <mruby.h>
-#include <mruby/string.h>
-#include <mruby/class.h>
-#include <mruby/data.h>
-
 #include "hiro.h"
 
 static const char* HIRO_DEFAULT_WINDOW_NAME = "Hiro Framework";

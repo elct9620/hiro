@@ -1,12 +1,6 @@
 #ifndef _HIRO_RENDERER_H
 #define _HIRO_RENDERER_H
 
-#include <SDL2/SDL.h>
-
-#include <mruby.h>
-#include <mruby/class.h>
-#include <mruby/data.h>
-
 #include "hiro.h"
 
 static int HIRO_DEFAULT_RENDERER_DRIVER = -1;
