@@ -5,11 +5,12 @@ The 2D Game Framework based on mruby.
 
 ## Requirement
 
-* GCC
+* gcc
 * SDL2
   * Image Extension
   * TTF Extension
   * Mixer Extension
+* pkg-config
 
 ### Operation System
 
