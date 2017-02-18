@@ -65,6 +65,4 @@ void hiro_define_event(mrb_state* mrb) {
 
   mrb_define_class_method(mrb, mod, "poll", hiro_event_mrb_poll, MRB_ARGS_NONE());
   mrb_define_class_method(mrb, mod, "on", hiro_event_mrb_on, MRB_ARGS_REQ(1) | MRB_ARGS_BLOCK());
-
-  mrb_define_const(mrb, mod, "QUIT", mrb_fixnum_value(SDL_QUIT));
 }
