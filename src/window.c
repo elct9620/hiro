@@ -24,7 +24,6 @@ mrb_value hiro_window_mrb_initialize(mrb_state* mrb, mrb_value self) {
   // TODO: Support custom SDL window flags
   win = hiro_window_create(mrb, name, _width, _height, HIRO_DEFAULT_WINDOW_FLAGS);
 
-  printf("W: %p\n", &hiro_window_type);
   mrb_data_init(self, win, &hiro_window_type);
   return self;
 }
