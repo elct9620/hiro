@@ -27,6 +27,19 @@ mrb_value hiro_renderer_mrb_update(mrb_state* mrb, mrb_value self) {
   struct hiro_renderer* renderer;
 
   renderer = DATA_GET_PTR(mrb, self, &hiro_renderer_type, struct hiro_renderer);
+  SDL_RenderClear(renderer->renderer);
+  // TODO: Implement Event class to handle it
+  SDL_Event ev;
+  while(SDL_PollEvent(&ev)) {
+    switch(ev.type) {
+      case SDL_QUIT:
+      case SDL_KEYDOWN:
+      case SDL_MOUSEBUTTONDOWN:
+        // TODO: Implement Game loop manager to handle it
+        mrb_raisef(mrb, E_RUNTIME_ERROR, "Force close game!");
+        break;
+    }
+  }
   SDL_RenderPresent(renderer->renderer);
 
   return self;
