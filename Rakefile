@@ -1,18 +1,14 @@
+$:.unshift File.join(File.dirname(__FILE__), 'tasks')
+
+require 'common'
+
 MRUBY_CONFIG=File.expand_path(ENV["MRUBY_CONFIG"] || "build_config.rb")
 
 MRUBY_DIR = File.expand_path("deps/mruby")
 BUILD_DIR = File.expand_path("build")
 
-def work_in(target)
-  current = Dir.pwd
-  Dir.chdir target
-  yield if block_given?
-  Dir.chdir current
-end
+load 'tasks/packager.rake'
 
-def clear_build
-  FileUtils.rm_r(BUILD_DIR, force: true)
-end
 
 task :dependencies do
   sh "git submodule update --init --recursive"

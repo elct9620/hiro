@@ -8,19 +8,55 @@
 #include <mruby/string.h>
 #include <mruby/array.h>
 
-FILE* open(const char* name) {
+char* dirname(const char *path) {
+  size_t len;
+  char *p, *dir;
+
+  if(path == NULL) {
+    return NULL;
+  }
+
+  p = strrchr(path, '/');
+  len = p != NULL ? (size_t)(p - path) : strlen(path);
+
+  dir = (char *)malloc(len + 1);
+  strncpy(dir, path, len);
+  dir[len] = '\0';
+
+  return dir;
+}
+
+char* relative_path(const char* dir, const char* filename) {
+  size_t len, dir_len, filename_len;
+  char* fullpath;
+
+  dir_len = strlen(dir);
+  filename_len = strlen(filename);
+  len = dir_len + filename_len + 1; // With '/'
+  fullpath = (char*)malloc(len + 1);
+
+  strncpy(fullpath, dir, strlen(dir));
+  fullpath[dir_len] = '/';
+
+  strncpy(fullpath + dir_len + 1, filename, filename_len);
+  fullpath[len] = '\0';
+
+  return fullpath;
+}
+
+void execute(mrb_state* mrb, const char* dir, const char* name) {
+  const char* path;
+  FILE* fp;
+
   if(name == NULL) {
     name = "hiro.rb";
   }
 
-  return fopen(name, "r");
-}
-
-void execute(mrb_state* mrb, const char* name) {
-  FILE* fp = open(name);
+  path = relative_path(dir, name);
+  fp = fopen(path, "r");
 
   if(fp == NULL) {
-    printf("Cannot open program file. (%s)\n", name);
+    printf("Cannot open program file. (%s)\n", path);
     return;
   }
 
@@ -45,6 +81,7 @@ void define_argument_const(mrb_state* mrb, int argc, char** argv) {
 }
 
 int main(int argc, char** argv) {
+  char* root = dirname(argv[0]);
 
   if(SDL_Init(SDL_INIT_EVERYTHING) != 0) {
     return 1;
@@ -54,7 +91,7 @@ int main(int argc, char** argv) {
 
   define_argument_const(mrb, argc, argv);
 
-  execute(mrb, argv[1]);
+  execute(mrb, root, argv[1]);
 
   if(mrb->exc) {
     mrb_print_error(mrb);
@@ -63,6 +100,7 @@ int main(int argc, char** argv) {
     return 1;
   }
 
+  free(root);
   mrb_close(mrb);
   SDL_Quit();
 
