@@ -32,6 +32,14 @@ $ rake compile
 $ rake run
 ```
 
+### Bundle
+
+#### macOS
+
+```
+$ rake bundle:osx
+```
+
 ### Clean
 
 ```
