@@ -28,7 +28,7 @@ end
 
 desc "Run compiled binary"
 task run: :compile do
-  sh "#{BUILD_DIR}/hiro"
+  sh "#{BUILD_DIR}/hiro ../examples/hiro.rb"
 end
 
 desc "Clear compiled file"
