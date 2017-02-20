@@ -3,8 +3,11 @@ renderer = Renderer.new win
 
 stop = false
 
+Event.on Event::KEYDOWN do |data|
+  stop = true if data.key == Keyboard::ESC
+end
+
 Event.on Event::QUIT do
-  puts "User closed game!"
   stop = true
 end
 
