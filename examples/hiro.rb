@@ -1,8 +1,6 @@
 win = Window.new "Hiro Example"
 renderer = Renderer.new win
-sprite = Sprite.new renderer, "examples/gamepad.png", 100, 100
-
-puts sprite.instance_variables
+sprite = Sprite.new renderer, "examples/gamepad.png", Vector2.new(100, 100)
 
 stop = false
 
