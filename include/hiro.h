@@ -20,3 +20,4 @@
 #include "renderer.h"
 #include "event.h"
 #include "sprite.h"
+#include "game.h"
