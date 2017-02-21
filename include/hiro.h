@@ -6,6 +6,7 @@
 
 // Dependencies
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 
 #include <mruby.h>
 #include <mruby/string.h>
@@ -18,3 +19,4 @@
 #include "window.h"
 #include "renderer.h"
 #include "event.h"
+#include "sprite.h"

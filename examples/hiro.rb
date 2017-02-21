@@ -1,5 +1,6 @@
 win = Window.new "Hiro Example"
 renderer = Renderer.new win
+sprite = Sprite.new renderer, "examples/gamepad.png"
 
 stop = false
 
@@ -14,6 +15,6 @@ end
 while !stop
   Event.poll
   renderer.update do
-    # TODO: Puts Sprite drawer at here
+    sprite.draw
   end
 end

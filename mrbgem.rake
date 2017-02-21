@@ -28,6 +28,7 @@ MRuby::Gem::Specification.new('hiro') do |spec|
   spec.summary = 'The 2D game framework based on mruby'
 
   spec.search_package(:sdl2)
+  spec.search_package(:SDL2_image)
 
   spec.bins = %w(hiro)
 
