@@ -13,5 +13,7 @@ end
 
 while !stop
   Event.poll
-  renderer.update
+  renderer.update do
+    # TODO: Puts Sprite drawer at here
+  end
 end

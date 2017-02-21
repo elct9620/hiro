@@ -26,10 +26,15 @@ mrb_value hiro_renderer_mrb_initialize(mrb_state* mrb, mrb_value self) {
 
 mrb_value hiro_renderer_mrb_update(mrb_state* mrb, mrb_value self) {
   struct hiro_renderer* renderer;
+  mrb_value block;
+
+  mrb_get_args(mrb, "|&", &block);
 
   renderer = DATA_GET_PTR(mrb, self, &hiro_renderer_type, struct hiro_renderer);
   SDL_RenderClear(renderer->renderer);
-  // TODO: Put renderer target draw callback at here
+  if(!mrb_nil_p(block)) {
+    mrb_yield_argv(mrb, block, 0, NULL);
+  }
   SDL_RenderPresent(renderer->renderer);
 
   return self;
@@ -68,6 +73,6 @@ void hiro_define_renderer(mrb_state* mrb) {
   MRB_SET_INSTANCE_TT(klass, MRB_TT_DATA);
 
   mrb_define_method(mrb, klass, "initialize", hiro_renderer_mrb_initialize, MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, klass, "update", hiro_renderer_mrb_update, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "update", hiro_renderer_mrb_update, MRB_ARGS_BLOCK());
 }
 
