@@ -100,7 +100,6 @@ int main(int argc, char** argv) {
   mrb_value _entrypoint = mrb_mod_cv_get(mrb, hiro, mrb_intern_lit(mrb, "entrypoint"));
   struct RClass* entrypoint = mrb_class_ptr(_entrypoint);
   mrb_value instance = mrb_obj_new(mrb, entrypoint, 0, NULL);
-  mrb_mod_cv_set(mrb, hiro, mrb_intern_lit(mrb, "instance"), instance);
   mrb_funcall(mrb, instance, "start", 0);
 
   if(mrb->exc) {

@@ -9,6 +9,8 @@ mrb_value hiro_renderer_mrb_initialize(mrb_state*, mrb_value);
 mrb_value hiro_renderer_mrb_update(mrb_state*, mrb_value);
 void hiro_renderer_mrb_free(mrb_state*, void*);
 
+SDL_Renderer* hiro_renderer_get_ptr(mrb_state*, mrb_value);
+
 struct hiro_renderer {
   SDL_Renderer* renderer;
 };

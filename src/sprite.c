@@ -3,14 +3,13 @@
 const struct mrb_data_type hiro_sprite_type = { "Sprite", hiro_sprite_mrb_free };
 
 mrb_value hiro_sprite_mrb_initialize(mrb_state* mrb, mrb_value self) {
-  mrb_value _renderer, _path, _position;
+  mrb_value _path, _position;
   mrb_int _width, _height;
   mrb_int argc;
   struct RClass* vector2_class;
 
   const char* path;
   struct hiro_sprite *sprite;
-  struct hiro_renderer *renderer;
 
   sprite = (struct hiro_sprite*)DATA_PTR(self);
   if(sprite != NULL) {
@@ -19,14 +18,12 @@ mrb_value hiro_sprite_mrb_initialize(mrb_state* mrb, mrb_value self) {
   mrb_data_init(self, NULL, &hiro_sprite_type);
 
 
-  argc = mrb_get_args(mrb, "oS|oii", &_renderer, &_path, &_position, &_width, &_height);
-
-  renderer = DATA_GET_PTR(mrb, _renderer, &hiro_renderer_type, struct hiro_renderer);
+  argc = mrb_get_args(mrb, "S|oii", &_path, &_position, &_width, &_height);
 
   path = mrb_str_to_cstr(mrb, _path);
 
-  _width = argc > 3 ? _width : 0;
-  _height = argc > 4 ? _height : 0;
+  _width = argc > 2 ? _width : 0;
+  _height = argc > 3 ? _height : 0;
 
   if(mrb_nil_p(_position)) {
     vector2_class = mrb_class_get(mrb, "Vector2");
@@ -35,7 +32,7 @@ mrb_value hiro_sprite_mrb_initialize(mrb_state* mrb, mrb_value self) {
 
   mrb_iv_set(mrb, self, mrb_intern_lit(mrb, "@position"), _position);
 
-  sprite = hiro_sprite_create(mrb, renderer->renderer, path, _width, _height);
+  sprite = hiro_sprite_create(mrb, hiro_default_renderer(mrb), path, _width, _height);
   mrb_data_init(self, sprite, &hiro_sprite_type);
 
   return self;
@@ -98,6 +95,6 @@ void hiro_define_sprite(mrb_state* mrb) {
 
   MRB_SET_INSTANCE_TT(klass, MRB_TT_DATA);
 
-  mrb_define_method(mrb, klass, "initialize", hiro_sprite_mrb_initialize, MRB_ARGS_REQ(2) | MRB_ARGS_OPT(3));
+  mrb_define_method(mrb, klass, "initialize", hiro_sprite_mrb_initialize, MRB_ARGS_REQ(1) | MRB_ARGS_OPT(3));
   mrb_define_method(mrb, klass, "draw", hiro_sprite_mrb_draw, MRB_ARGS_NONE());
 }

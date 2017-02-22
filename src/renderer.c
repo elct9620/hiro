@@ -67,6 +67,12 @@ struct hiro_renderer* hiro_renderer_create(mrb_state* mrb, SDL_Window* win) {
   return renderer;
 }
 
+SDL_Renderer* hiro_renderer_get_ptr(mrb_state* mrb, mrb_value self) {
+  struct hiro_renderer* renderer;
+  renderer = DATA_GET_PTR(mrb, self, &hiro_renderer_type, struct hiro_renderer);
+  return renderer->renderer;
+}
+
 void hiro_define_renderer(mrb_state* mrb) {
   struct RClass* klass;
   klass = mrb_define_class(mrb, "Renderer", mrb->object_class);

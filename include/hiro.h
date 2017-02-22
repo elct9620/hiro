@@ -16,6 +16,7 @@
 #include <mruby/hash.h>
 
 // Hiro Framework
+#include "core.h"
 #include "window.h"
 #include "renderer.h"
 #include "event.h"

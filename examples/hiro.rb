@@ -1,9 +1,7 @@
 class HiroGame < Game
   def initialize
     super
-    @win = Window.new "Hiro Example"
-    @renderer = Renderer.new @win
-    @sprite = Sprite.new @renderer, "examples/gamepad.png", Vector2.new(100, 100)
+    @sprite = Sprite.new "examples/gamepad.png", Vector2.new(100, 100)
   end
 
   def update
