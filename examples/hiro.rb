@@ -1,11 +1,10 @@
+game = Game.new
 win = Window.new "Hiro Example"
 renderer = Renderer.new win
 sprite = Sprite.new renderer, "examples/gamepad.png", Vector2.new(100, 100)
 
-stop = false
-
 Event.on Event::KEYDOWN do |data|
-  stop = true if data.key == Keyboard::ESC
+  game.stop! if data.key == Keyboard::ESC
   case data.key
   when Keyboard::LEFT then sprite.x -= 10
   when Keyboard::RIGHT then sprite.x += 10
@@ -15,11 +14,10 @@ Event.on Event::KEYDOWN do |data|
 end
 
 Event.on Event::QUIT do
-  stop = true
+  game.stop!
 end
 
-while !stop
-  Event.poll
+game.loop do
   renderer.update do
     sprite.draw
   end
