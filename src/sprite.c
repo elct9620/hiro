@@ -50,7 +50,6 @@ mrb_value hiro_sprite_mrb_draw(mrb_state* mrb, mrb_value self) {
   _x = mrb_fixnum(mrb_funcall(mrb, self, "x", 0));
   _y = mrb_fixnum(mrb_funcall(mrb, self, "y", 0));
 
-  // TODO: Add position arguments
   distance.w = sprite->width;
   distance.h = sprite->height;
   distance.x = _x;

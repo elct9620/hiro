@@ -20,17 +20,14 @@ mrb_value hiro_game_mrb_initialize(mrb_state* mrb, mrb_value self) {
   return self;
 }
 
-mrb_value hiro_game_mrb_loop(mrb_state* mrb, mrb_value self) {
+mrb_value hiro_game_mrb_start(mrb_state* mrb, mrb_value self) {
   struct hiro_game* game;
   mrb_value cb;
-  mrb_bool has_callback;
   SDL_Event ev;
 
   game = DATA_GET_PTR(mrb, self, &hiro_game_type, struct hiro_game);
 
   mrb_get_args(mrb, "|&", &cb);
-
-  has_callback = !mrb_nil_p(cb);
 
   while(!game->stop) {
     // TODO: Implement Game Instance related methods
@@ -38,11 +35,13 @@ mrb_value hiro_game_mrb_loop(mrb_state* mrb, mrb_value self) {
       hiro_event_call(mrb, ev);
     }
 
-    if(has_callback) {
-      mrb_yield_argv(mrb, cb, 0, NULL);
-    }
+    mrb_funcall(mrb, self, "update", 0);
   }
 
+  return self;
+}
+
+mrb_value hiro_game_mrb_update(mrb_state* mrb, mrb_value self) {
   return self;
 }
 
@@ -73,6 +72,7 @@ void hiro_define_game(mrb_state *mrb) {
   MRB_SET_INSTANCE_TT(klass, MRB_TT_DATA);
 
   mrb_define_method(mrb, klass, "initialize", hiro_game_mrb_initialize, MRB_ARGS_NONE());
-  mrb_define_method(mrb, klass, "loop", hiro_game_mrb_loop, MRB_ARGS_BLOCK());
+  mrb_define_method(mrb, klass, "update", hiro_game_mrb_update, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "start", hiro_game_mrb_start, MRB_ARGS_BLOCK());
   mrb_define_method(mrb, klass, "stop!", hiro_game_mrb_stop_bang, MRB_ARGS_NONE());
 }

@@ -7,6 +7,8 @@
 #include <mruby/compile.h>
 #include <mruby/string.h>
 #include <mruby/array.h>
+#include <mruby/variable.h>
+#include <mruby/class.h>
 
 char* dirname(const char *path) {
   size_t len;
@@ -92,6 +94,14 @@ int main(int argc, char** argv) {
   define_argument_const(mrb, argc, argv);
 
   execute(mrb, root, argv[1]);
+
+  // Boot Game
+  struct RClass* hiro = mrb_module_get(mrb, "Hiro");
+  mrb_value _entrypoint = mrb_mod_cv_get(mrb, hiro, mrb_intern_lit(mrb, "entrypoint"));
+  struct RClass* entrypoint = mrb_class_ptr(_entrypoint);
+  mrb_value instance = mrb_obj_new(mrb, entrypoint, 0, NULL);
+  mrb_mod_cv_set(mrb, hiro, mrb_intern_lit(mrb, "instance"), instance);
+  mrb_funcall(mrb, instance, "start", 0);
 
   if(mrb->exc) {
     mrb_print_error(mrb);
