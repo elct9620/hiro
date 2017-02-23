@@ -7,6 +7,7 @@ mrb_bool hiro_event_has_events(mrb_state*);
 mrb_value hiro_event_get_events(mrb_state*);
 void hiro_event_init_events(mrb_state*);
 void hiro_event_register(mrb_state*, mrb_int, mrb_value);
+
 HIRO_API void hiro_event_call(mrb_state*, SDL_Event);
 
 mrb_value hiro_event_to_mrb_value(mrb_state*, SDL_Event);

@@ -14,6 +14,7 @@
 #include <mruby/data.h>
 #include <mruby/variable.h>
 #include <mruby/hash.h>
+#include <mruby/array.h>
 
 // Hiro Framework
 #include "core.h"

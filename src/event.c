@@ -2,7 +2,7 @@
 
 mrb_bool hiro_event_has_events(mrb_state* mrb) {
   struct RClass* mod = mrb_module_get(mrb, "Event");
-  mrb_sym cv_name = mrb_intern_cstr(mrb, "events");
+  mrb_sym cv_name = mrb_intern_lit(mrb, "events");
   return mrb_mod_cv_defined(mrb, mod, cv_name);
 }
 
@@ -12,7 +12,7 @@ mrb_value hiro_event_get_events(mrb_state* mrb) {
   }
 
   struct RClass* mod = mrb_module_get(mrb, "Event");
-  mrb_sym cv_name = mrb_intern_cstr(mrb, "events");
+  mrb_sym cv_name = mrb_intern_lit(mrb, "events");
   return mrb_mod_cv_get(mrb, mod, cv_name);
 }
 
@@ -53,7 +53,7 @@ mrb_value hiro_event_set_keyboard_data(mrb_state* mrb, SDL_Event event) {
 
 void hiro_event_init_events(mrb_state* mrb) {
   struct RClass* mod = mrb_module_get(mrb, "Event");
-  mrb_sym cv_name = mrb_intern_cstr(mrb, "events");
+  mrb_sym cv_name = mrb_intern_lit(mrb, "events");
   mrb_value events = mrb_hash_new(mrb);
   mrb_mod_cv_set(mrb, mod, cv_name, events);
 }
@@ -66,17 +66,18 @@ void hiro_event_register(mrb_state* mrb, mrb_int event, mrb_value cb) {
 void hiro_event_call(mrb_state* mrb, SDL_Event event) {
   mrb_value events = hiro_event_get_events(mrb);
   mrb_value cb = mrb_hash_get(mrb, events, mrb_fixnum_value(event.type));
-  mrb_value data = hiro_event_to_mrb_value(mrb, event);
+  mrb_value args[1];
+
+  args[0] = hiro_event_to_mrb_value(mrb, event);
 
   if(mrb_nil_p(cb)) {
     return;
   }
 
-  mrb_yield_argv(mrb, cb, 1, &data);
+  mrb_yield_argv(mrb, cb, 1, args);
 }
 
 mrb_value hiro_event_mrb_poll(mrb_state* mrb, mrb_value self) {
-
   SDL_Event ev;
   while(SDL_PollEvent(&ev)) {
     hiro_event_call(mrb, ev);
@@ -86,7 +87,6 @@ mrb_value hiro_event_mrb_poll(mrb_state* mrb, mrb_value self) {
 }
 
 mrb_value hiro_event_mrb_on(mrb_state* mrb, mrb_value self) {
-
   mrb_int event;
   mrb_value callback;
 
