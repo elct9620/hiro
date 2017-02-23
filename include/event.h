@@ -8,6 +8,10 @@ mrb_value hiro_event_get_events(mrb_state*);
 void hiro_event_init_events(mrb_state*);
 void hiro_event_register(mrb_state*, mrb_int, mrb_value);
 
+mrb_value hiro_event_get_delegates(mrb_state*, mrb_value, mrb_int);
+void hiro_event_init_delegates(mrb_state*, mrb_value, mrb_int);
+void hiro_event_call_delegate(mrb_state*, mrb_value, mrb_int, mrb_value);
+
 HIRO_API void hiro_event_call(mrb_state*, SDL_Event);
 
 mrb_value hiro_event_to_mrb_value(mrb_state*, SDL_Event);

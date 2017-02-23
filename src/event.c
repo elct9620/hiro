@@ -60,21 +60,42 @@ void hiro_event_init_events(mrb_state* mrb) {
 
 void hiro_event_register(mrb_state* mrb, mrb_int event, mrb_value cb) {
   mrb_value events = hiro_event_get_events(mrb);
-  mrb_hash_set(mrb, events, mrb_fixnum_value(event), cb);
+  mrb_value delegates = hiro_event_get_delegates(mrb, events, event);
+  mrb_ary_push(mrb, delegates, cb);
+}
+
+mrb_value hiro_event_get_delegates(mrb_state* mrb, mrb_value events, mrb_int event) {
+  mrb_value delegates;
+
+  delegates =  mrb_hash_get(mrb, events, mrb_fixnum_value(event));
+  if(mrb_nil_p(delegates)) {
+    delegates = mrb_ary_new(mrb);
+    mrb_hash_set(mrb, events, mrb_fixnum_value(event), delegates);
+  }
+
+  return delegates;
+}
+
+void hiro_event_call_delegate(mrb_state* mrb, mrb_value events, mrb_int type, mrb_value data) {
+  mrb_value delegates = hiro_event_get_delegates(mrb, events, type);
+  mrb_value cb;
+  mrb_value args[1];
+  int size = RARRAY_LEN(delegates);
+
+  args[0] = data;
+
+  for(int i = 0; i < size; i++) {
+    cb = mrb_ary_ref(mrb, delegates, i);
+    if(!mrb_nil_p(cb)) {
+      mrb_yield_argv(mrb, cb, 1, args);
+    }
+  }
 }
 
 void hiro_event_call(mrb_state* mrb, SDL_Event event) {
   mrb_value events = hiro_event_get_events(mrb);
-  mrb_value cb = mrb_hash_get(mrb, events, mrb_fixnum_value(event.type));
-  mrb_value args[1];
-
-  args[0] = hiro_event_to_mrb_value(mrb, event);
-
-  if(mrb_nil_p(cb)) {
-    return;
-  }
-
-  mrb_yield_argv(mrb, cb, 1, args);
+  mrb_value data = hiro_event_to_mrb_value(mrb, event);
+  hiro_event_call_delegate(mrb, events, event.type, data);
 }
 
 mrb_value hiro_event_mrb_poll(mrb_state* mrb, mrb_value self) {
