@@ -53,6 +53,7 @@ void hiro_define(mrb_state* mrb) {
 
 void mrb_hiro_gem_init(mrb_state *mrb) {
   hiro_define(mrb);
+  hiro_define_config(mrb);
   hiro_define_window(mrb);
   hiro_define_renderer(mrb);
   hiro_define_event(mrb);

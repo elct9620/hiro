@@ -82,6 +82,16 @@ void define_argument_const(mrb_state* mrb, int argc, char** argv) {
   mrb_define_global_const(mrb, "ARGV", ary);
 }
 
+int has_error(mrb_state* mrb) {
+  if(mrb->exc) {
+    mrb_print_error(mrb);
+    mrb_close(mrb);
+    SDL_Quit();
+    return 1;
+  }
+  return 0;
+}
+
 int main(int argc, char** argv) {
   char* root = dirname(argv[0]);
 
@@ -95,6 +105,10 @@ int main(int argc, char** argv) {
 
   execute(mrb, root, argv[1]);
 
+  if(has_error(mrb)) {
+    return 1;
+  }
+
   // Boot Game
   struct RClass* hiro = mrb_module_get(mrb, "Hiro");
   mrb_value _entrypoint = mrb_mod_cv_get(mrb, hiro, mrb_intern_lit(mrb, "entrypoint"));
@@ -102,10 +116,7 @@ int main(int argc, char** argv) {
   mrb_value instance = mrb_obj_new(mrb, entrypoint, 0, NULL);
   mrb_funcall(mrb, instance, "start", 0);
 
-  if(mrb->exc) {
-    mrb_print_error(mrb);
-    mrb_close(mrb);
-    SDL_Quit();
+  if(has_error(mrb)) {
     return 1;
   }
 
