@@ -49,6 +49,10 @@ mrb_value hiro_config_mrb_method_missing(mrb_state* mrb, mrb_value self) {
   method_len = strlen(method_name);
 
   if(mrb_cv_defined(mrb, self, name)) {
+    if(value_len > 0) {
+      hiro_config_set(mrb, self, name, values[0]);
+      return values[0];
+    }
     return mrb_cv_get(mrb, self, name);
   }
 
