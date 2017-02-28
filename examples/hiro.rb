@@ -1,3 +1,5 @@
+Config.name = "Example Game"
+
 class HiroGame < Game
   def initialize
     super

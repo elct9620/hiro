@@ -55,6 +55,7 @@ mrb_value hiro_config_mrb_method_missing(mrb_state* mrb, mrb_value self) {
   if(hiro_config_is_setter(method_name)) {
     attr_name = (char*)malloc(method_len);
     attr_name = strncpy(attr_name, method_name, method_len - 1);
+    attr_name[method_len - 1] = '\0';
     hiro_config_set(mrb, self, mrb_intern_cstr(mrb, attr_name), values[0]);
     free(attr_name);
     return mrb_nil_value();
