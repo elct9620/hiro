@@ -3,6 +3,8 @@
 
 #include "hiro.h"
 
+HIRO_API mrb_value hiro_config_get(mrb_state*, mrb_sym);
+
 mrb_bool hiro_config_is_setter(const char*);
 void hiro_config_set(mrb_state* mrb, mrb_value, mrb_sym, mrb_value);
 

@@ -88,11 +88,10 @@ mrb_value hiro_game_create_default_window(mrb_state* mrb) {
   mrb_value args[3];
 
   struct RClass* klass = mrb_class_get(mrb, "Window");
-  struct RClass* config = mrb_class_get(mrb, "Config");
 
-  args[0] = mrb_mod_cv_get(mrb, config, mrb_intern_lit(mrb, "name"));
-  args[1] = mrb_mod_cv_get(mrb, config, mrb_intern_lit(mrb, "width"));
-  args[2] = mrb_mod_cv_get(mrb, config, mrb_intern_lit(mrb, "height"));
+  args[0] = hiro_config_get(mrb, mrb_intern_lit(mrb, "name"));
+  args[1] = hiro_config_get(mrb, mrb_intern_lit(mrb, "width"));
+  args[2] = hiro_config_get(mrb, mrb_intern_lit(mrb, "height"));
 
   return mrb_obj_new(mrb, klass, 3, args);
 }
