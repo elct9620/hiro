@@ -16,12 +16,18 @@
 #include <mruby/hash.h>
 #include <mruby/array.h>
 
-// Hiro Framework
+/**
+ * Hiro Framework
+ */
+
 #include "core.h"
 #include "config.h"
 #include "window.h"
 #include "renderer.h"
 #include "event.h"
-#include "sprite.h"
 #include "game.h"
 #include "scene.h"
+
+// Game Object
+#include "game_object.h"
+#include "sprite.h"
