@@ -87,7 +87,6 @@ mrb_value hiro_config_mrb_method_missing(mrb_state* mrb, mrb_value self) {
 void hiro_define_config(mrb_state* mrb) {
   struct RClass* klass = mrb_define_class(mrb, "Config", mrb->object_class);
   mrb_value instance;
-  MRB_SET_INSTANCE_TT(klass, MRB_TT_SCLASS);
   mrb_undef_class_method(mrb, klass, "new");
 
   mrb_define_class_method(mrb, klass, "register", hiro_config_mrb_register, MRB_ARGS_REQ(1) | MRB_ARGS_OPT(1));

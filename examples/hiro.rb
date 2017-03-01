@@ -1,4 +1,6 @@
-Config.name = "Example Game"
+Config.setup do
+ name  "Example Game"
+end
 
 class HiroGame < Game
   def initialize

@@ -3,5 +3,12 @@ class Config
   register :width, 1080
   register :height, 720
 
-  # TODO: Support block config mode
+  def self.setup(&block)
+    @@instance.instance_exec(&block) if block_given?
+  end
+
+  def method_missing(name, *args, &block)
+    # TODO: Add error fallback when Config not support
+    Config.send(name, *args, &block)
+  end
 end
