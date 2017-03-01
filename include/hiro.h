@@ -24,3 +24,4 @@
 #include "event.h"
 #include "sprite.h"
 #include "game.h"
+#include "scene.h"

@@ -2,17 +2,14 @@ Config.setup do
  name  "Example Game"
 end
 
-class HiroGame < Game
+class ExampleScene < Scene
   def initialize
-    super
     @sprite = Sprite.new "examples/gamepad.png", Vector2.new(100, 100)
+
+    add @sprite
 
     # NOTE: Event manager seems can have more improve
     Event.on Event::KEYDOWN, &on_keydown
-  end
-
-  def draw
-    @sprite.draw
   end
 
   def on_keydown
@@ -25,6 +22,22 @@ class HiroGame < Game
       when Keyboard::DOWN then @sprite.y += 10
       end
     }
+  end
+end
+
+class HiroGame < Game
+  def initialize
+    super
+
+    @scene = ExampleScene.new
+  end
+
+  def update
+    @scene.update
+  end
+
+  def draw
+    @scene.draw
   end
 end
 

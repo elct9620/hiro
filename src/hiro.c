@@ -59,6 +59,7 @@ void mrb_hiro_gem_init(mrb_state *mrb) {
   hiro_define_event(mrb);
   hiro_define_sprite(mrb);
   hiro_define_game(mrb);
+  hiro_define_scene(mrb);
 }
 
 void mrb_hiro_gem_final(mrb_state *mrb) {
