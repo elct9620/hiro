@@ -11,7 +11,7 @@ class HiroGame < Game
     Event.on Event::KEYDOWN, &on_keydown
   end
 
-  def update
+  def draw
     @sprite.draw
   end
 

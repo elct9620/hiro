@@ -49,12 +49,18 @@ mrb_value hiro_game_mrb_start(mrb_state* mrb, mrb_value self) {
       hiro_event_call(mrb, ev);
     }
 
+    mrb_funcall(mrb, self, "update", 0);
+
     // TODO: Split render and actions controller
     SDL_RenderClear(renderer);
-    mrb_funcall(mrb, self, "update", 0);
+    mrb_funcall(mrb, self, "draw", 0);
     SDL_RenderPresent(renderer);
   }
 
+  return self;
+}
+
+mrb_value hiro_game_mrb_draw(mrb_state* mrb, mrb_value self) {
   return self;
 }
 
@@ -118,6 +124,7 @@ void hiro_define_game(mrb_state *mrb) {
 
   mrb_define_method(mrb, klass, "initialize", hiro_game_mrb_initialize, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "update", hiro_game_mrb_update, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "draw", hiro_game_mrb_draw, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "start", hiro_game_mrb_start, MRB_ARGS_BLOCK());
   mrb_define_method(mrb, klass, "stop!", hiro_game_mrb_stop_bang, MRB_ARGS_NONE());
 }

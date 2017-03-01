@@ -5,6 +5,7 @@
 
 mrb_value hiro_game_mrb_initialize(mrb_state*, mrb_value);
 mrb_value hiro_game_mrb_update(mrb_state*, mrb_value);
+mrb_value hiro_game_mrb_draw(mrb_state*, mrb_value);
 mrb_value hiro_game_mrb_start(mrb_state*, mrb_value);
 mrb_value hiro_game_mrb_stop_bang(mrb_state*, mrb_value);
 void hiro_game_mrb_free(mrb_state*, void*);
