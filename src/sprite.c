@@ -90,8 +90,8 @@ struct hiro_sprite* hiro_sprite_create(mrb_state* mrb, SDL_Renderer *renderer, c
 }
 
 void hiro_define_sprite(mrb_state* mrb) {
-
   struct RClass *klass, *game_object_class;
+
   game_object_class = mrb_class_get(mrb, "GameObject");
   klass = mrb_define_class(mrb, "Sprite", game_object_class);
 

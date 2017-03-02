@@ -3,6 +3,8 @@
 
 #include "hiro.h"
 
+mrb_value hiro_game_get_current_scene(mrb_state*, mrb_value);
+
 mrb_value hiro_game_mrb_initialize(mrb_state*, mrb_value);
 mrb_value hiro_game_mrb_update(mrb_state*, mrb_value);
 mrb_value hiro_game_mrb_draw(mrb_state*, mrb_value);

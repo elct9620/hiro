@@ -2,9 +2,15 @@
 
 const struct mrb_data_type hiro_game_type = { "Game", hiro_game_mrb_free };
 
+mrb_value hiro_game_get_current_scene(mrb_state* mrb, mrb_value self) {
+  // TODO: Add some protect method
+  return mrb_iv_get(mrb, self, mrb_intern_lit(mrb, "current_scene"));
+}
+
 mrb_value hiro_game_mrb_initialize(mrb_state* mrb, mrb_value self) {
   struct hiro_game* game;
-  mrb_value window, renderer;
+  struct RClass* default_scene;
+  mrb_value window, renderer, current_scene;
 
   game = (struct hiro_game*)DATA_PTR(self);
   if(game != NULL) {
@@ -14,6 +20,7 @@ mrb_value hiro_game_mrb_initialize(mrb_state* mrb, mrb_value self) {
 
   window = hiro_game_create_default_window(mrb);
   renderer = hiro_game_create_default_renderer(mrb, window);
+  default_scene = mrb_class_ptr(hiro_config_get(mrb, mrb_intern_lit(mrb, "default_scene")));
 
   mrb_gc_register(mrb, window);
   mrb_gc_register(mrb, renderer);
@@ -27,6 +34,10 @@ mrb_value hiro_game_mrb_initialize(mrb_state* mrb, mrb_value self) {
   mrb_data_init(self, game, &hiro_game_type);
 
   hiro_set_instance(mrb, self);
+
+  current_scene = mrb_obj_new(mrb, default_scene, 0, NULL);
+
+  mrb_iv_set(mrb, self, mrb_intern_lit(mrb, "current_scene"), current_scene);
 
   return self;
 }
@@ -61,10 +72,16 @@ mrb_value hiro_game_mrb_start(mrb_state* mrb, mrb_value self) {
 }
 
 mrb_value hiro_game_mrb_draw(mrb_state* mrb, mrb_value self) {
+  mrb_value current_scene;
+  current_scene = hiro_game_get_current_scene(mrb, self);
+  mrb_funcall(mrb, current_scene, "draw", 0);
   return self;
 }
 
 mrb_value hiro_game_mrb_update(mrb_state* mrb, mrb_value self) {
+  mrb_value current_scene;
+  current_scene = hiro_game_get_current_scene(mrb, self);
+  mrb_funcall(mrb, current_scene, "update", 0);
   return self;
 }
 

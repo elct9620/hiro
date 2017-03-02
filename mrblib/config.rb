@@ -2,6 +2,7 @@ class Config
   register :name, "Hiro Framework"
   register :width, 1080
   register :height, 720
+  register :default_scene, Scene
 
   def self.setup(&block)
     @@instance.instance_exec(&block) if block_given?

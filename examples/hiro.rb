@@ -14,7 +14,6 @@ class ExampleScene < Scene
 
   def on_keydown
     Proc.new { |data|
-      Hiro.quit! if data.key == Keyboard::ESC
       case data.key
       when Keyboard::LEFT then @sprite.x -= 10
       when Keyboard::RIGHT then @sprite.x += 10
@@ -25,24 +24,18 @@ class ExampleScene < Scene
   end
 end
 
+# TODO: Support using string as scene class name
+Config.default_scene ExampleScene
+
 class HiroGame < Game
-  def initialize
-    super
-
-    @scene = ExampleScene.new
-  end
-
-  def update
-    @scene.update
-  end
-
-  def draw
-    @scene.draw
-  end
 end
 
 Event.on Event::QUIT do
   Hiro.quit!
+end
+
+Event.on Event::KEYDOWN do
+  Hiro.quit! if data.key == Keyboard::ESC
 end
 
 Hiro.entrypoint = HiroGame
