@@ -5,6 +5,9 @@ end
 class ExampleScene < Scene
   def initialize
     @sprite = Sprite.new "examples/gamepad.png", Vector2.new(100, 100)
+    @sprite2 = Sprite.new "examples/gamepad.png", Vector2.new(100, 100)
+
+    @sprite.add @sprite2
 
     add @sprite
 
@@ -34,7 +37,7 @@ Event.on Event::QUIT do
   Hiro.quit!
 end
 
-Event.on Event::KEYDOWN do
+Event.on Event::KEYDOWN do |data|
   Hiro.quit! if data.key == Keyboard::ESC
 end
 

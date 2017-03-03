@@ -43,6 +43,9 @@ mrb_value hiro_sprite_mrb_draw(mrb_state* mrb, mrb_value self) {
   SDL_Rect distance;
   mrb_int _x, _y;
 
+  // TODO: Use `super` instead
+  hiro_game_object_each_child_call(mrb, self, "draw", 0, NULL);
+
   sprite = DATA_GET_PTR(mrb, self, &hiro_sprite_type, struct hiro_sprite);
   _x = mrb_fixnum(mrb_funcall(mrb, self, "x", 0));
   _y = mrb_fixnum(mrb_funcall(mrb, self, "y", 0));
