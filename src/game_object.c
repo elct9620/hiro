@@ -1,5 +1,17 @@
 #include "game_object.h"
 
+mrb_bool hiro_is_kind_of_game_object(mrb_state* mrb, mrb_value object) {
+  struct RClass* game_object_class;
+
+  game_object_class = mrb_class_get(mrb, "GameObject");
+
+  if(!mrb_obj_is_kind_of(mrb, object, game_object_class)) {
+    return 0;
+  }
+
+  return 1;
+}
+
 void hiro_game_object_set_parent(mrb_state* mrb, mrb_value self, mrb_value parent) {
   struct RClass* game_object_class;
   mrb_bool is_game_object, is_nil;
@@ -33,13 +45,11 @@ mrb_value hiro_game_object_get_children(mrb_state* mrb, mrb_value self) {
 }
 
 void hiro_game_object_add_child(mrb_state* mrb, mrb_value self, mrb_value object) {
-  struct RClass* game_object_class;
   mrb_value children;
 
-  game_object_class = mrb_class_get(mrb, "GameObject");
   children = hiro_game_object_get_children(mrb, self);
 
-  if(!mrb_obj_is_kind_of(mrb, object, game_object_class)) {
+  if(!hiro_is_kind_of_game_object(mrb, object)) {
     mrb_raisef(mrb, E_RUNTIME_ERROR, "%S is not vaild GameObject.", object);
   }
 

@@ -74,14 +74,14 @@ mrb_value hiro_game_mrb_start(mrb_state* mrb, mrb_value self) {
 mrb_value hiro_game_mrb_draw(mrb_state* mrb, mrb_value self) {
   mrb_value current_scene;
   current_scene = hiro_game_get_current_scene(mrb, self);
-  mrb_funcall(mrb, current_scene, "draw", 0);
+  hiro_scene_draw(mrb, current_scene);
   return self;
 }
 
 mrb_value hiro_game_mrb_update(mrb_state* mrb, mrb_value self) {
   mrb_value current_scene;
   current_scene = hiro_game_get_current_scene(mrb, self);
-  mrb_funcall(mrb, current_scene, "update", 0);
+  hiro_scene_update(mrb, current_scene);
   return self;
 }
 

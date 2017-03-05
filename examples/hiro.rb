@@ -5,7 +5,7 @@ end
 class ExampleScene < Scene
   def initialize
     @sprite = Sprite.new "examples/gamepad.png", Vector2.new(100, 100)
-    @sprite2 = Sprite.new "examples/gamepad.png", Vector2.new(100, 100)
+    @sprite2 = Sprite.new "examples/gamepad.png", Vector2.new(50, 50)
 
     @sprite.add @sprite2
 

@@ -3,6 +3,8 @@
 
 #include "hiro.h"
 
+HIRO_API mrb_bool hiro_is_kind_of_game_object(mrb_state* mrb, mrb_value);
+
 void hiro_game_object_set_parent(mrb_state* mrb, mrb_value, mrb_value);
 
 mrb_value hiro_game_object_get_children(mrb_state*, mrb_value);
