@@ -44,7 +44,7 @@ mrb_value hiro_sprite_mrb_draw(mrb_state* mrb, mrb_value self) {
   mrb_int _x, _y;
 
   // TODO: Use `super` instead
-  hiro_game_object_each_child_call(mrb, self, "draw", 0, NULL);
+  hiro_helper_each_array_element_do(mrb, self, mrb_intern_lit(mrb, "children"), "draw", 0, NULL);
 
   sprite = DATA_GET_PTR(mrb, self, &hiro_sprite_type, struct hiro_sprite);
   _x = mrb_fixnum(mrb_funcall(mrb, self, "x", 0));

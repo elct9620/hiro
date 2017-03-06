@@ -21,6 +21,7 @@
  */
 
 #include "core.h"
+#include "helper.h"
 #include "config.h"
 #include "window.h"
 #include "renderer.h"
