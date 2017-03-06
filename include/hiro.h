@@ -29,6 +29,9 @@
 #include "game.h"
 #include "scene.h"
 
+// Component
+#include "component.h"
+
 // Game Object
 #include "game_object.h"
 #include "sprite.h"
