@@ -30,3 +30,22 @@ void hiro_helper_each_array_element_do(mrb_state* mrb, mrb_value instance, mrb_s
     }
   }
 }
+
+void hiro_helper_each_array_element_fn(mrb_state* mrb, mrb_value instance, mrb_sym attr, void (*fn)(mrb_state*, mrb_value)) {
+  mrb_value elements, object;
+  int len, i;
+
+  elements = hiro_helper_get_array_attribute(mrb, instance, attr);
+  len = RARRAY_LEN(elements);
+
+  for(i = 0; i < len; i++) {
+    object = mrb_ary_ref(mrb, elements, i);
+    if(!mrb_nil_p(object)) {
+      fn(mrb, object);
+    }
+  }
+}
+
+mrb_value hiro_helper_mrb_blob_api(mrb_state* mrb, mrb_value self) {
+  return self;
+}

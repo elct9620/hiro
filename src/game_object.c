@@ -52,24 +52,25 @@ void hiro_game_object_add_component(mrb_state* mrb, mrb_value self, mrb_value ob
   hiro_component_set_game_object(mrb, object, self);
 }
 
+void hiro_game_object_update(mrb_state* mrb, mrb_value self) {
+  hiro_helper_each_array_element_fn(mrb, self, mrb_intern_lit(mrb, "components"), hiro_component_update);
+  hiro_helper_each_array_element_fn(mrb, self, mrb_intern_lit(mrb, "children"), hiro_game_object_update);
+  mrb_funcall(mrb, self, "update", 0, NULL);
+}
+
+void hiro_game_object_draw(mrb_state* mrb, mrb_value self) {
+  hiro_helper_each_array_element_fn(mrb, self, mrb_intern_lit(mrb, "components"), hiro_component_draw);
+  hiro_helper_each_array_element_fn(mrb, self, mrb_intern_lit(mrb, "children"), hiro_game_object_draw);
+  mrb_funcall(mrb, self, "draw", 0, NULL);
+
+}
+
 mrb_value hiro_game_object_mrb_add(mrb_state* mrb, mrb_value self) {
   mrb_value object;
 
   mrb_get_args(mrb, "o", &object);
   hiro_game_object_add_child(mrb, self, object);
 
-  return self;
-}
-
-mrb_value hiro_game_object_mrb_update(mrb_state* mrb, mrb_value self) {
-  hiro_helper_each_array_element_do(mrb, self, mrb_intern_lit(mrb, "components"), "update", 0, NULL);
-  hiro_helper_each_array_element_do(mrb, self, mrb_intern_lit(mrb, "children"), "update", 0, NULL);
-  return self;
-}
-
-mrb_value hiro_game_object_mrb_draw(mrb_state* mrb, mrb_value self) {
-  hiro_helper_each_array_element_do(mrb, self, mrb_intern_lit(mrb, "components"), "draw", 0, NULL);
-  hiro_helper_each_array_element_do(mrb, self, mrb_intern_lit(mrb, "children"), "draw", 0, NULL);
   return self;
 }
 
@@ -100,8 +101,8 @@ void hiro_define_game_object(mrb_state* mrb) {
   klass = mrb_define_class(mrb, "GameObject", mrb->object_class);
 
   mrb_define_method(mrb, klass, "add", hiro_game_object_mrb_add, MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, klass, "update", hiro_game_object_mrb_update, MRB_ARGS_NONE());
-  mrb_define_method(mrb, klass, "draw", hiro_game_object_mrb_draw, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "update", hiro_helper_mrb_blob_api, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "draw", hiro_helper_mrb_blob_api, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "parent", hiro_game_object_mrb_parent, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "parent=", hiro_game_object_mrb_set_parent, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, klass, "add_component", hiro_game_object_mrb_add_component, MRB_ARGS_REQ(1));

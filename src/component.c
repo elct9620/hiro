@@ -24,14 +24,18 @@ void hiro_component_set_game_object(mrb_state* mrb, mrb_value self, mrb_value ga
   mrb_iv_set(mrb, self, mrb_intern_lit(mrb, "@game_object"), game_object);
 }
 
-mrb_value hiro_component_mrb_blob_api(mrb_state* mrb, mrb_value self) {
-  return self;
+void hiro_component_update(mrb_state* mrb, mrb_value self) {
+  mrb_funcall(mrb, self, "update", 0, NULL);
+}
+
+void hiro_component_draw(mrb_state* mrb, mrb_value self) {
+  mrb_funcall(mrb, self, "draw", 0, NULL);
 }
 
 void hiro_define_component(mrb_state* mrb) {
   struct RClass* klass;
 
   klass = mrb_define_class(mrb, "Component", mrb->object_class);
-  mrb_define_method(mrb, klass, "update", hiro_component_mrb_blob_api, MRB_ARGS_NONE());
-  mrb_define_method(mrb, klass, "draw", hiro_component_mrb_blob_api, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "update", hiro_helper_mrb_blob_api, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "draw", hiro_helper_mrb_blob_api, MRB_ARGS_NONE());
 }
