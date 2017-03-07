@@ -9,6 +9,20 @@ mrb_value hiro_renderer_component_new(mrb_state* mrb, mrb_int argc, mrb_value* a
   return mrb_obj_new(mrb, klass, argc, argv);
 }
 
+void hiro_renderer_component_setup_animation(mrb_state* mrb, mrb_value self) {
+  struct hiro_renderer_component *component;
+  mrb_int _width, _height;
+
+  component = DATA_GET_PTR(mrb, self, &hiro_renderer_component_type, struct hiro_renderer_component);
+  _width = mrb_fixnum(mrb_iv_get(mrb, self, mrb_intern_lit(mrb, "@width")));
+  _height = mrb_fixnum(mrb_iv_get(mrb, self, mrb_intern_lit(mrb, "@height")));
+
+  component->xFrames = ceil(component->width / _width);
+  component->yFrames = ceil(component->height / _height);
+
+  mrb_iv_set(mrb, self, mrb_intern_lit(mrb, "@frames"), mrb_fixnum_value(component->xFrames * component->yFrames));
+}
+
 mrb_value hiro_renderer_component_mrb_initialize(mrb_state* mrb, mrb_value self) {
   mrb_value _path;
   mrb_int _width, _height;
@@ -36,6 +50,8 @@ mrb_value hiro_renderer_component_mrb_initialize(mrb_state* mrb, mrb_value self)
 
   mrb_iv_set(mrb, self, mrb_intern_lit(mrb, "@width"), mrb_fixnum_value(component->width));
   mrb_iv_set(mrb, self, mrb_intern_lit(mrb, "@height"), mrb_fixnum_value(component->height));
+  mrb_iv_set(mrb, self, mrb_intern_lit(mrb, "@animate"), mrb_false_value());
+  mrb_iv_set(mrb, self, mrb_intern_lit(mrb, "@frame"), mrb_fixnum_value(0));
 
   hiro_component_set_name(mrb, self, "renderer");
 
@@ -43,23 +59,50 @@ mrb_value hiro_renderer_component_mrb_initialize(mrb_state* mrb, mrb_value self)
 }
 
 mrb_value hiro_renderer_component_mrb_draw(mrb_state* mrb, mrb_value self) {
-  mrb_value game_object;
+  mrb_value game_object, is_animate;
   struct hiro_renderer_component* component;
-  SDL_Rect distance;
-  mrb_int _x, _y;
+  SDL_Rect distance, clip;
+  mrb_int _x, _y, _frame;
 
   game_object = mrb_iv_get(mrb, self, mrb_intern_lit(mrb, "@game_object"));
 
   component = DATA_GET_PTR(mrb, self, &hiro_renderer_component_type, struct hiro_renderer_component);
   _x = mrb_fixnum(mrb_funcall(mrb, game_object, "x", 0));
   _y = mrb_fixnum(mrb_funcall(mrb, game_object, "y", 0));
+  _frame = mrb_fixnum(mrb_iv_get(mrb, self, mrb_intern_lit(mrb, "@frame")));
 
   distance.w = mrb_fixnum(mrb_iv_get(mrb, self, mrb_intern_lit(mrb, "@width")));
   distance.h = mrb_fixnum(mrb_iv_get(mrb, self, mrb_intern_lit(mrb, "@height")));
   distance.x = _x;
   distance.y = _y;
 
-  SDL_RenderCopy(component->renderer, component->texture, NULL, &distance);
+  is_animate = mrb_iv_get(mrb, self, mrb_intern_lit(mrb, "@animate"));
+
+  if(mrb_bool(is_animate)) {
+    clip.w = distance.w;
+    clip.h = distance.h;
+    clip.x = _frame % (component->yFrames - 1) * clip.w;
+    clip.y = _frame / component->xFrames * clip.h;
+    SDL_RenderCopy(component->renderer, component->texture, &clip, &distance);
+  } else {
+    SDL_RenderCopy(component->renderer, component->texture, NULL, &distance);
+  }
+
+  return self;
+}
+
+mrb_value hiro_renderer_component_mrb_set_animate(mrb_state* mrb, mrb_value self) {
+  mrb_sym attr = mrb_intern_lit(mrb, "@animate");
+  mrb_bool enabled;
+
+  mrb_get_args(mrb, "b", &enabled);
+
+  if(enabled) {
+    hiro_renderer_component_setup_animation(mrb, self);
+    mrb_iv_set(mrb, self, attr, mrb_true_value());
+  } else {
+    mrb_iv_set(mrb, self, attr, mrb_false_value());
+  }
 
   return self;
 }
@@ -104,4 +147,5 @@ void hiro_define_renderer_component(mrb_state* mrb, struct RClass* component_cla
 
   mrb_define_method(mrb, klass, "initialize", hiro_renderer_component_mrb_initialize, MRB_ARGS_REQ(1) | MRB_ARGS_OPT(2));
   mrb_define_method(mrb, klass, "draw", hiro_renderer_component_mrb_draw, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "animate=", hiro_renderer_component_mrb_set_animate, MRB_ARGS_REQ(1));
 }
