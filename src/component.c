@@ -38,4 +38,7 @@ void hiro_define_component(mrb_state* mrb) {
   klass = mrb_define_class(mrb, "Component", mrb->object_class);
   mrb_define_method(mrb, klass, "update", hiro_helper_mrb_blob_api, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "draw", hiro_helper_mrb_blob_api, MRB_ARGS_NONE());
+
+  // Component Implements
+  hiro_define_renderer_component(mrb, klass);
 }

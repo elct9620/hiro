@@ -9,6 +9,7 @@ class GameObject
   end
 
   def x=(x)
+    @position ||= Vector2.new(0, 0)
     @position.x = x
   end
 
@@ -19,6 +20,7 @@ class GameObject
   end
 
   def y=(y)
+    @position ||= Vector2.new(0, 0)
     @position.y = y
   end
 end

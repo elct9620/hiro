@@ -2,12 +2,12 @@
 
 void hiro_scene_update(mrb_state* mrb, mrb_value scene) {
   mrb_funcall(mrb, scene, "update", 0, NULL);
-  hiro_scene_each_child_call(mrb, scene, "update", 0, NULL);
+  hiro_helper_each_array_element_fn(mrb, scene, mrb_intern_lit(mrb, "children"), hiro_game_object_update);
 }
 
 void hiro_scene_draw(mrb_state* mrb, mrb_value scene) {
   mrb_funcall(mrb, scene, "draw", 0, NULL);
-  hiro_scene_each_child_call(mrb, scene, "draw", 0, NULL);
+  hiro_helper_each_array_element_fn(mrb, scene, mrb_intern_lit(mrb, "children"), hiro_game_object_draw);
 }
 
 mrb_value hiro_scene_get_children(mrb_state* mrb, mrb_value self) {
