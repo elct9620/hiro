@@ -34,6 +34,9 @@ mrb_value hiro_renderer_component_mrb_initialize(mrb_state* mrb, mrb_value self)
   component = hiro_renderer_component_create(mrb, hiro_default_renderer(mrb), path, _width, _height);
   mrb_data_init(self, component, &hiro_renderer_component_type);
 
+  mrb_iv_set(mrb, self, mrb_intern_lit(mrb, "@width"), mrb_fixnum_value(component->width));
+  mrb_iv_set(mrb, self, mrb_intern_lit(mrb, "@height"), mrb_fixnum_value(component->height));
+
   hiro_component_set_name(mrb, self, "renderer");
 
   return self;
@@ -51,8 +54,8 @@ mrb_value hiro_renderer_component_mrb_draw(mrb_state* mrb, mrb_value self) {
   _x = mrb_fixnum(mrb_funcall(mrb, game_object, "x", 0));
   _y = mrb_fixnum(mrb_funcall(mrb, game_object, "y", 0));
 
-  distance.w = component->width;
-  distance.h = component->height;
+  distance.w = mrb_fixnum(mrb_iv_get(mrb, self, mrb_intern_lit(mrb, "@width")));
+  distance.h = mrb_fixnum(mrb_iv_get(mrb, self, mrb_intern_lit(mrb, "@height")));
   distance.x = _x;
   distance.y = _y;
 
