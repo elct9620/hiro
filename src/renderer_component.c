@@ -34,6 +34,8 @@ mrb_value hiro_renderer_component_mrb_initialize(mrb_state* mrb, mrb_value self)
   component = hiro_renderer_component_create(mrb, hiro_default_renderer(mrb), path, _width, _height);
   mrb_data_init(self, component, &hiro_renderer_component_type);
 
+  hiro_component_set_name(mrb, self, "renderer");
+
   return self;
 }
 
