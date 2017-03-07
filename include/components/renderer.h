@@ -3,6 +3,8 @@
 
 #include "hiro.h"
 
+HIRO_API mrb_value hiro_renderer_component_new(mrb_state*, mrb_int, mrb_value*);
+
 mrb_value hiro_renderer_component_mrb_initialize(mrb_state*, mrb_value);
 mrb_value hiro_renderer_component_mrb_draw(mrb_state*, mrb_value);
 void hiro_renderer_component_mrb_free(mrb_state*, void*);

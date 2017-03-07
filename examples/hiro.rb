@@ -7,13 +7,7 @@ class ExampleScene < Scene
     @sprite = Sprite.new "examples/gamepad.png", Vector2.new(100, 100)
     @sprite2 = Sprite.new "examples/gamepad.png", Vector2.new(50, 50)
 
-    @object = GameObject.new
-    @object.x = 100
-    @object.y = 100
-    @object.add_component RendererComponent.new("examples/gamepad.png")
-
     @sprite.add @sprite2
-    @sprite.add @object
 
     add @sprite
 

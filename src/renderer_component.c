@@ -2,6 +2,13 @@
 
 const struct mrb_data_type hiro_renderer_component_type = { "RendererComponent", hiro_renderer_component_mrb_free };
 
+mrb_value hiro_renderer_component_new(mrb_state* mrb, mrb_int argc, mrb_value* argv) {
+  struct RClass* klass;
+  klass =  mrb_class_get(mrb, "RendererComponent");
+
+  return mrb_obj_new(mrb, klass, argc, argv);
+}
+
 mrb_value hiro_renderer_component_mrb_initialize(mrb_state* mrb, mrb_value self) {
   mrb_value _path;
   mrb_int _width, _height;
