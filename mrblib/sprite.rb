@@ -1,5 +1,5 @@
 class Sprite
-  attr_reader :renderer
+  attr_reader :renderer, :animator
 
   def initialize(path, position = nil, width = 0, height = 0)
     @position = position || Vector2.new(0, 0)

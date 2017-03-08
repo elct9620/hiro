@@ -4,14 +4,6 @@ end
 
 class ExampleScene < Scene
   def initialize
-    @keyframe = {
-      down: [0, 1, 2],
-      left: [3, 4, 5],
-      right: [6, 7, 8],
-      up: [9, 10, 11]
-    }
-    @counts = 0
-    @animation = :down
     @sprite = Sprite.new "examples/gamepad.png", Vector2.new(100, 100)
     @sprite2 = Sprite.new "examples/character.png", Vector2.new(100, 100)
 
@@ -20,6 +12,8 @@ class ExampleScene < Scene
     @sprite2.renderer.width = 32
     @sprite2.renderer.height = 32
     @sprite2.renderer.animate = true
+    @sprite2.add_component AnimatorComponent.new
+    @sprite2.animator.set(:down, [0, 1, 2]).set(:left, [3, 4, 5]).set(:right, [6, 7, 8]).set(:up, [9, 10, 11])
 
     add @sprite
 
@@ -32,20 +26,17 @@ class ExampleScene < Scene
       case data.key
       when Keyboard::LEFT
         @sprite.x -= 5
-        @animation = :left
+        @sprite2.animator.to(:left) unless data.repeat
       when Keyboard::RIGHT
         @sprite.x += 5
-        @animation = :right
+        @sprite2.animator.to(:right) unless data.repeat
       when Keyboard::UP
         @sprite.y -= 5
-        @animation = :up
+        @sprite2.animator.to(:up) unless data.repeat
       when Keyboard::DOWN
         @sprite.y += 5
-        @animation = :down
+        @sprite2.animator.to(:down) unless data.repeat
       end
-
-      @sprite2.renderer.frame = @keyframe[@animation][@counts]
-      @counts = (@counts + 1) % 3
     }
   end
 end

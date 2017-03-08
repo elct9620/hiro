@@ -77,4 +77,5 @@ void hiro_define_component(mrb_state* mrb) {
 
   // Component Implements
   hiro_define_renderer_component(mrb, klass);
+  hiro_define_animator_component(mrb, klass);
 }

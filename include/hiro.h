@@ -32,6 +32,7 @@
 // Component
 #include "component.h"
 #include "components/renderer.h"
+#include "components/animator.h"
 
 // Game Object
 #include "game_object.h"
