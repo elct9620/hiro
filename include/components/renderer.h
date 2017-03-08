@@ -12,7 +12,7 @@ mrb_value hiro_renderer_component_mrb_draw(mrb_state*, mrb_value);
 mrb_value hiro_renderer_component_mrb_set_animate(mrb_state*, mrb_value);
 void hiro_renderer_component_mrb_free(mrb_state*, void*);
 
-struct hiro_renderer_component* hiro_renderer_component_create(mrb_state*, SDL_Renderer*, const char *path, int width, int height);
+struct hiro_renderer_component* hiro_renderer_component_create(mrb_state*, SDL_Renderer*, const char *path);
 
 struct hiro_renderer_component {
   const char*   path;
