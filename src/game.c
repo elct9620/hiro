@@ -49,12 +49,20 @@ mrb_value hiro_game_mrb_start(mrb_state* mrb, mrb_value self) {
 
   SDL_Renderer* renderer;
 
+  // TODO: Set FPS from Ruby
+  mrb_int FPS = 60;
+  mrb_int FIXED_TICKS = ceil(1000/FPS); // Milliseconds
+
+  mrb_int currentTicks = SDL_GetTicks();
+  mrb_int nextUpdateTicks = currentTicks + FIXED_TICKS;
+
   game = DATA_GET_PTR(mrb, self, &hiro_game_type, struct hiro_game);
   renderer = hiro_game_default_renderer(mrb, self);
 
   mrb_get_args(mrb, "|&", &cb);
 
   while(!game->stop) {
+    currentTicks = SDL_GetTicks();
     // TODO: Implement Game Instance related methods
     while(SDL_PollEvent(&ev)) {
       hiro_event_call(mrb, ev);
@@ -63,9 +71,13 @@ mrb_value hiro_game_mrb_start(mrb_state* mrb, mrb_value self) {
     mrb_funcall(mrb, self, "update", 0);
 
     // TODO: Split render and actions controller
-    SDL_RenderClear(renderer);
-    mrb_funcall(mrb, self, "draw", 0);
-    SDL_RenderPresent(renderer);
+    if(currentTicks > nextUpdateTicks) {
+      nextUpdateTicks += FIXED_TICKS;
+
+      SDL_RenderClear(renderer);
+      mrb_funcall(mrb, self, "draw", 0);
+      SDL_RenderPresent(renderer);
+    }
   }
 
   return self;
