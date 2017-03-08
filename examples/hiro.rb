@@ -9,10 +9,12 @@ class ExampleScene < Scene
 
     @sprite.add @char
 
+    @char.animator.fps = 6
     @char.animator.set(:down, [0, 1, 2])
-                     .set(:left, [3, 4, 5])
-                     .set(:right, [6, 7, 8])
-                     .set(:up, [9, 10, 11])
+                  .set(:left, [3, 4, 5])
+                  .set(:right, [6, 7, 8])
+                  .set(:up, [9, 10, 11])
+
 
     add @sprite
 

@@ -31,7 +31,7 @@ void hiro_helper_each_array_element_do(mrb_state* mrb, mrb_value instance, mrb_s
   }
 }
 
-void hiro_helper_each_array_element_fn(mrb_state* mrb, mrb_value instance, mrb_sym attr, void (*fn)(mrb_state*, mrb_value)) {
+void hiro_helper_each_array_element_fn(mrb_state* mrb, mrb_value instance, mrb_sym attr, void (*fn)(mrb_state*, mrb_value,mrb_int,mrb_value*), mrb_int argc, mrb_value* argv) {
   mrb_value elements, object;
   int len, i;
 
@@ -41,7 +41,7 @@ void hiro_helper_each_array_element_fn(mrb_state* mrb, mrb_value instance, mrb_s
   for(i = 0; i < len; i++) {
     object = mrb_ary_ref(mrb, elements, i);
     if(!mrb_nil_p(object)) {
-      fn(mrb, object);
+      fn(mrb, object, argc, argv);
     }
   }
 }

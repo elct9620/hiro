@@ -1,13 +1,14 @@
 #include "scene.h"
 
-void hiro_scene_update(mrb_state* mrb, mrb_value scene) {
-  mrb_funcall(mrb, scene, "update", 0, NULL);
-  hiro_helper_each_array_element_fn(mrb, scene, mrb_intern_lit(mrb, "children"), hiro_game_object_update);
+void hiro_scene_update(mrb_state* mrb, mrb_value scene, mrb_int ticks) {
+  mrb_value argv[1] = {mrb_fixnum_value(ticks)};
+  mrb_funcall_argv(mrb, scene, mrb_intern_lit(mrb, "update"), 1, argv);
+  hiro_helper_each_array_element_fn(mrb, scene, mrb_intern_lit(mrb, "children"), hiro_game_object_update, 1, argv);
 }
 
 void hiro_scene_draw(mrb_state* mrb, mrb_value scene) {
   mrb_funcall(mrb, scene, "draw", 0, NULL);
-  hiro_helper_each_array_element_fn(mrb, scene, mrb_intern_lit(mrb, "children"), hiro_game_object_draw);
+  hiro_helper_each_array_element_fn(mrb, scene, mrb_intern_lit(mrb, "children"), hiro_game_object_draw, 0, NULL);
 }
 
 mrb_value hiro_scene_get_children(mrb_state* mrb, mrb_value self) {

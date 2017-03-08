@@ -52,15 +52,15 @@ void hiro_game_object_add_component(mrb_state* mrb, mrb_value self, mrb_value ob
   hiro_component_set_game_object(mrb, object, self);
 }
 
-void hiro_game_object_update(mrb_state* mrb, mrb_value self) {
-  hiro_helper_each_array_element_fn(mrb, self, mrb_intern_lit(mrb, "components"), hiro_component_update);
-  hiro_helper_each_array_element_fn(mrb, self, mrb_intern_lit(mrb, "children"), hiro_game_object_update);
-  mrb_funcall(mrb, self, "update", 0, NULL);
+void hiro_game_object_update(mrb_state* mrb, mrb_value self, mrb_int argc, mrb_value* argv) {
+  hiro_helper_each_array_element_fn(mrb, self, mrb_intern_lit(mrb, "components"), hiro_component_update, argc, argv);
+  hiro_helper_each_array_element_fn(mrb, self, mrb_intern_lit(mrb, "children"), hiro_game_object_update, argc, argv);
+  mrb_funcall_argv(mrb, self, mrb_intern_lit(mrb, "update"), argc, argv);
 }
 
-void hiro_game_object_draw(mrb_state* mrb, mrb_value self) {
-  hiro_helper_each_array_element_fn(mrb, self, mrb_intern_lit(mrb, "components"), hiro_component_draw);
-  hiro_helper_each_array_element_fn(mrb, self, mrb_intern_lit(mrb, "children"), hiro_game_object_draw);
+void hiro_game_object_draw(mrb_state* mrb, mrb_value self, mrb_int argc, mrb_value* argv) {
+  hiro_helper_each_array_element_fn(mrb, self, mrb_intern_lit(mrb, "components"), hiro_component_draw, 0, NULL);
+  hiro_helper_each_array_element_fn(mrb, self, mrb_intern_lit(mrb, "children"), hiro_game_object_draw, 0, NULL);
   mrb_funcall(mrb, self, "draw", 0, NULL);
 
 }
@@ -101,7 +101,7 @@ void hiro_define_game_object(mrb_state* mrb) {
   klass = mrb_define_class(mrb, "GameObject", mrb->object_class);
 
   mrb_define_method(mrb, klass, "add", hiro_game_object_mrb_add, MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, klass, "update", hiro_helper_mrb_blob_api, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "update", hiro_helper_mrb_blob_api, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, klass, "draw", hiro_helper_mrb_blob_api, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "parent", hiro_game_object_mrb_parent, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "parent=", hiro_game_object_mrb_set_parent, MRB_ARGS_REQ(1));

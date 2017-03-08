@@ -3,7 +3,7 @@
 
 #include "hiro.h"
 
-HIRO_API void hiro_scene_update(mrb_state*, mrb_value);
+HIRO_API void hiro_scene_update(mrb_state*, mrb_value, mrb_int);
 HIRO_API void hiro_scene_draw(mrb_state*, mrb_value);
 
 mrb_value hiro_scene_get_children(mrb_state*, mrb_value);

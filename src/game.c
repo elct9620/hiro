@@ -53,8 +53,8 @@ mrb_value hiro_game_mrb_start(mrb_state* mrb, mrb_value self) {
   mrb_int FPS = 60;
   mrb_int FIXED_TICKS = ceil(1000/FPS); // Milliseconds
 
-  mrb_int currentTicks = SDL_GetTicks();
-  mrb_int nextUpdateTicks = currentTicks + FIXED_TICKS;
+  mrb_int current_ticks = SDL_GetTicks();
+  mrb_int next_update_ticks = current_ticks + FIXED_TICKS;
 
   game = DATA_GET_PTR(mrb, self, &hiro_game_type, struct hiro_game);
   renderer = hiro_game_default_renderer(mrb, self);
@@ -62,17 +62,17 @@ mrb_value hiro_game_mrb_start(mrb_state* mrb, mrb_value self) {
   mrb_get_args(mrb, "|&", &cb);
 
   while(!game->stop) {
-    currentTicks = SDL_GetTicks();
+    current_ticks = SDL_GetTicks();
     // TODO: Implement Game Instance related methods
     while(SDL_PollEvent(&ev)) {
       hiro_event_call(mrb, ev);
     }
 
-    mrb_funcall(mrb, self, "update", 0);
+    mrb_funcall(mrb, self, "update", 1, mrb_fixnum_value(current_ticks));
 
     // TODO: Split render and actions controller
-    if(currentTicks > nextUpdateTicks) {
-      nextUpdateTicks += FIXED_TICKS;
+    if(current_ticks > next_update_ticks) {
+      next_update_ticks += FIXED_TICKS;
 
       SDL_RenderClear(renderer);
       mrb_funcall(mrb, self, "draw", 0);
@@ -91,9 +91,14 @@ mrb_value hiro_game_mrb_draw(mrb_state* mrb, mrb_value self) {
 }
 
 mrb_value hiro_game_mrb_update(mrb_state* mrb, mrb_value self) {
+  // TODO: Move into game start
   mrb_value current_scene;
+  mrb_int argc, ticks;
+  argc = mrb_get_args(mrb, "i", &ticks);
+
+  ticks = argc > 0 ? ticks : 0;
   current_scene = hiro_game_get_current_scene(mrb, self);
-  hiro_scene_update(mrb, current_scene);
+  hiro_scene_update(mrb, current_scene, ticks);
   return self;
 }
 
@@ -152,7 +157,7 @@ void hiro_define_game(mrb_state *mrb) {
   MRB_SET_INSTANCE_TT(klass, MRB_TT_DATA);
 
   mrb_define_method(mrb, klass, "initialize", hiro_game_mrb_initialize, MRB_ARGS_NONE());
-  mrb_define_method(mrb, klass, "update", hiro_game_mrb_update, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "update", hiro_game_mrb_update, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, klass, "draw", hiro_game_mrb_draw, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "start", hiro_game_mrb_start, MRB_ARGS_BLOCK());
   mrb_define_method(mrb, klass, "stop!", hiro_game_mrb_stop_bang, MRB_ARGS_NONE());

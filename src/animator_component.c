@@ -3,6 +3,8 @@
 mrb_value hiro_animator_component_mrb_initialize(mrb_state* mrb, mrb_value self) {
   mrb_iv_set(mrb, self, mrb_intern_lit(mrb, "@current"), mrb_nil_value());
   mrb_iv_set(mrb, self, mrb_intern_lit(mrb, "@frame"), mrb_fixnum_value(0));
+  mrb_iv_set(mrb, self, mrb_intern_lit(mrb, "@fps"), mrb_fixnum_value(60));
+  mrb_iv_set(mrb, self, mrb_intern_lit(mrb, "@fixed_next_ticks"), mrb_fixnum_value(1000/60));
   hiro_helper_get_hash_attribute(mrb, self, mrb_intern_lit(mrb, "@animations"));
   hiro_component_set_name(mrb, self, "animator");
   return self;
