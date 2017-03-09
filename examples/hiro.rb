@@ -5,19 +5,18 @@ end
 class ExampleScene < Scene
   def initialize
     @sprite = Sprite.new "examples/gamepad.png", Vector2.new(100, 100)
-    @char = Animation.new "examples/character.png", 32, 32, Vector2.new(100, 100)
+    @char = Animation.new "examples/Misaki.png", 48, 56, Vector2.new(100, 100)
 
     @sprite.add @char
 
     @char.animator.fps = 6
-    @char.animator.set(:down, [0, 1, 2])
-                  .set(:left, [3, 4, 5])
-                  .set(:right, [6, 7, 8])
-                  .set(:up, [9, 10, 11])
-                  .stop
-
+    @char.animator.set(:idle, [0, 1, 2, 3])
+                  .set(:walk, [4, 9, 14, 15, 16, 17])
+                  .set(:run, [5, 6, 7, 8, 10, 11, 12, 13])
 
     add @sprite
+
+    @acc = 0
 
     # NOTE: Event manager seems can have more improve
     Event.on Event::KEYDOWN, &on_keydown
@@ -26,29 +25,30 @@ class ExampleScene < Scene
 
   def on_keyup
     Proc.new { |data|
-      @char.animator.stop
+      @char.animator.to(:idle)
+      @acc = 0
     }
   end
 
   def on_keydown
     Proc.new { |data|
       @char.animator.play
+      @acc += 1
+
+      animation = @acc > 3 ? :run : :walk
+      animate_switch = @char.animator.current != animation
 
       case data.key
       when Keyboard::LEFT
-        @sprite.x -= 5
-        @char.animator.to(:left) unless data.repeat
+        # TODO: Add flip sprite support
+        @sprite.x -= 10
+        @char.animator.to(animation) if animate_switch
       when Keyboard::RIGHT
-        @sprite.x += 5
-        @char.animator.to(:right) unless data.repeat
-      when Keyboard::UP
-        @sprite.y -= 5
-        @char.animator.to(:up) unless data.repeat
-      when Keyboard::DOWN
-        @sprite.y += 5
-        @char.animator.to(:down) unless data.repeat
+        @sprite.x += 10
+        @char.animator.to(animation) if animate_switch
       end
     }
+
   end
 end
 

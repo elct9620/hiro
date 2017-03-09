@@ -64,7 +64,7 @@ mrb_value hiro_renderer_component_mrb_draw(mrb_state* mrb, mrb_value self) {
   mrb_value game_object, is_animate;
   struct hiro_renderer_component* component;
   SDL_Rect distance, clip;
-  mrb_int _x, _y, _frame;
+  mrb_int _x, _y, _clip_y, _frame;
 
   game_object = mrb_iv_get(mrb, self, mrb_intern_lit(mrb, "@game_object"));
 
@@ -81,10 +81,12 @@ mrb_value hiro_renderer_component_mrb_draw(mrb_state* mrb, mrb_value self) {
   is_animate = mrb_iv_get(mrb, self, mrb_intern_lit(mrb, "@animate"));
 
   if(mrb_bool(is_animate)) {
+    _clip_y = ceil((float)(_frame+1) / component->xFrames);
+
     clip.w = distance.w;
     clip.h = distance.h;
-    clip.x = _frame % (component->yFrames - 1) * clip.w;
-    clip.y = _frame / component->xFrames * clip.h;
+    clip.x = _frame % component->xFrames * clip.w;
+    clip.y = (_clip_y - 1) * clip.h;
     SDL_RenderCopy(component->renderer, component->texture, &clip, &distance);
   } else {
     SDL_RenderCopy(component->renderer, component->texture, NULL, &distance);

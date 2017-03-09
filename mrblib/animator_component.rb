@@ -1,4 +1,5 @@
 class AnimatorComponent
+  attr_reader :current
   attr_accessor :animations, :fps
 
   def set(name, frames)
@@ -21,7 +22,7 @@ class AnimatorComponent
     @fps = fps
   end
 
-  def current
+  def keyframes
     @animations[@current] || @animations[@animations.keys.first] || [0]
   end
 
@@ -46,12 +47,12 @@ class AnimatorComponent
   end
 
   def request_next_frame(ticks)
-    @frame = (@frame + 1) %  current.size
+    @frame = (@frame + 1) %  keyframes.size
     @next_ticks = @fixed_next_ticks + ticks
   end
 
   def update_frame
-    @game_object.renderer.frame = current[@frame]
+    @game_object.renderer.frame = keyframes[@frame]
   end
 
   def update(ticks)
