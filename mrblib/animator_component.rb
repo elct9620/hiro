@@ -31,6 +31,16 @@ class AnimatorComponent
     @game_object.renderer.animate?
   end
 
+  def play
+    @playing = true
+    self
+  end
+
+  def stop
+    @playing = false
+    self
+  end
+
   def playing?
     animate_enabled? && @playing
   end

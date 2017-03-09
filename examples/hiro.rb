@@ -14,16 +14,26 @@ class ExampleScene < Scene
                   .set(:left, [3, 4, 5])
                   .set(:right, [6, 7, 8])
                   .set(:up, [9, 10, 11])
+                  .stop
 
 
     add @sprite
 
     # NOTE: Event manager seems can have more improve
     Event.on Event::KEYDOWN, &on_keydown
+    Event.on Event::KEYUP, &on_keyup
+  end
+
+  def on_keyup
+    Proc.new { |data|
+      @char.animator.stop
+    }
   end
 
   def on_keydown
     Proc.new { |data|
+      @char.animator.play
+
       case data.key
       when Keyboard::LEFT
         @sprite.x -= 5
