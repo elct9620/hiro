@@ -25,14 +25,30 @@ class AnimatorComponent
     @animations[@current] || @animations[@animations.keys.first] || [0]
   end
 
-  def update(ticks)
-    @next_ticks ||= ticks
-    is_animation = !@game_object.renderer.nil? && @game_object.renderer.animate?
-    return unless is_animation
-    return unless ticks > @next_ticks
-    @game_object.renderer.frame = current[@frame]
+  def animate_enabled?
+    return false unless @game_object.respond_to?(:renderer)
+    return false unless @game_object.renderer.respond_to?(:animate?)
+    @game_object.renderer.animate?
+  end
+
+  def playing?
+    animate_enabled? && @playing
+  end
+
+  def request_next_frame(ticks)
     @frame = (@frame + 1) %  current.size
-    @next_ticks = ticks + @fixed_next_ticks
+    @next_ticks = @fixed_next_ticks + ticks
+  end
+
+  def update_frame
+    @game_object.renderer.frame = current[@frame]
+  end
+
+  def update(ticks)
+    return unless playing?
+    return unless ticks > @next_ticks
+    update_frame
+    request_next_frame ticks
     self
   end
 end
