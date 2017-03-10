@@ -142,6 +142,8 @@ struct hiro_renderer_component* hiro_renderer_component_create(mrb_state* mrb, S
   component->path = path;
   component->width = surface->w;
   component->height = surface->h;
+  component->scaleX = 1;
+  component->scaleY = 1;
   component->texture = SDL_CreateTextureFromSurface(renderer, surface);
   component->renderer = renderer;
 

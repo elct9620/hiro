@@ -18,6 +18,8 @@ struct hiro_renderer_component {
   const char*   path;
   int           width;
   int           height;
+  int           scaleX;
+  int           scaleY;
   int           xFrames;
   int           yFrames;
   SDL_Texture*  texture;
