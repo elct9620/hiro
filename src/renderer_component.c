@@ -54,6 +54,8 @@ mrb_value hiro_renderer_component_mrb_initialize(mrb_state* mrb, mrb_value self)
   mrb_iv_set(mrb, self, mrb_intern_lit(mrb, "@height"), mrb_fixnum_value(_height));
   mrb_iv_set(mrb, self, mrb_intern_lit(mrb, "@animate"), mrb_false_value());
   mrb_iv_set(mrb, self, mrb_intern_lit(mrb, "@frame"), mrb_fixnum_value(0));
+  // TODO: Use "Scale" to implement
+  mrb_iv_set(mrb, self, mrb_intern_lit(mrb, "@flip"), mrb_false_value());
 
   hiro_component_set_name(mrb, self, "renderer");
 
@@ -64,7 +66,9 @@ mrb_value hiro_renderer_component_mrb_draw(mrb_state* mrb, mrb_value self) {
   mrb_value game_object, is_animate;
   struct hiro_renderer_component* component;
   SDL_Rect distance, clip;
+  SDL_RendererFlip flip;
   mrb_int _x, _y, _clip_y, _frame;
+  mrb_bool _flip;
 
   game_object = mrb_iv_get(mrb, self, mrb_intern_lit(mrb, "@game_object"));
 
@@ -72,6 +76,9 @@ mrb_value hiro_renderer_component_mrb_draw(mrb_state* mrb, mrb_value self) {
   _x = mrb_fixnum(mrb_funcall(mrb, game_object, "x", 0));
   _y = mrb_fixnum(mrb_funcall(mrb, game_object, "y", 0));
   _frame = mrb_fixnum(mrb_iv_get(mrb, self, mrb_intern_lit(mrb, "@frame")));
+
+  _flip = mrb_bool(mrb_iv_get(mrb, self, mrb_intern_lit(mrb, "@flip")));
+  flip = _flip ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;
 
   distance.w = mrb_fixnum(mrb_iv_get(mrb, self, mrb_intern_lit(mrb, "@width")));
   distance.h = mrb_fixnum(mrb_iv_get(mrb, self, mrb_intern_lit(mrb, "@height")));
@@ -87,9 +94,9 @@ mrb_value hiro_renderer_component_mrb_draw(mrb_state* mrb, mrb_value self) {
     clip.h = distance.h;
     clip.x = _frame % component->xFrames * clip.w;
     clip.y = (_clip_y - 1) * clip.h;
-    SDL_RenderCopy(component->renderer, component->texture, &clip, &distance);
+    SDL_RenderCopyEx(component->renderer, component->texture, &clip, &distance, 0, NULL, flip);
   } else {
-    SDL_RenderCopy(component->renderer, component->texture, NULL, &distance);
+    SDL_RenderCopyEx(component->renderer, component->texture, NULL, &distance, 0, NULL, flip);
   }
 
   return self;
