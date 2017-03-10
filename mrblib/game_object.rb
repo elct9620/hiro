@@ -9,6 +9,7 @@ class GameObject
   end
 
   def x=(x)
+    # TODO: Fix position invalid when use -= operator
     @position ||= Vector2.new(0, 0)
     @position.x = x
   end

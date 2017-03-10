@@ -1,5 +1,5 @@
 class AnimatorComponent
-  attr_reader :current
+  attr_reader :current, :frame
   attr_accessor :animations, :fps
 
   def set(name, frames)
