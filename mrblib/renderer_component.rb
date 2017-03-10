@@ -1,6 +1,6 @@
 class RendererComponent
-  attr_accessor :width, :height, :frame, :flip
-  attr_reader :frames
+  attr_accessor :width, :height, :frame
+  attr_reader :frames, :scale
 
   def animate?
     @animate

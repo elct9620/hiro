@@ -42,10 +42,10 @@ class ExampleScene < Scene
       when Keyboard::LEFT
         # TODO: Add flip sprite support
         @sprite.x -= 10
-        @char.renderer.flip = true
+        @char.renderer.scale.x = -1
         @char.animator.to(animation) if animate_switch
       when Keyboard::RIGHT
-        @char.renderer.flip = false
+        @char.renderer.scale.x = 1
         @sprite.x += 10
         @char.animator.to(animation) if animate_switch
       end

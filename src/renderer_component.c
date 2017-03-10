@@ -54,8 +54,7 @@ mrb_value hiro_renderer_component_mrb_initialize(mrb_state* mrb, mrb_value self)
   mrb_iv_set(mrb, self, mrb_intern_lit(mrb, "@height"), mrb_fixnum_value(_height));
   mrb_iv_set(mrb, self, mrb_intern_lit(mrb, "@animate"), mrb_false_value());
   mrb_iv_set(mrb, self, mrb_intern_lit(mrb, "@frame"), mrb_fixnum_value(0));
-  // TODO: Use "Scale" to implement
-  mrb_iv_set(mrb, self, mrb_intern_lit(mrb, "@flip"), mrb_false_value());
+  mrb_iv_set(mrb, self, mrb_intern_lit(mrb, "@scale"), hiro_vector2_value(mrb, 0, 0));
 
   hiro_component_set_name(mrb, self, "renderer");
 
@@ -63,12 +62,11 @@ mrb_value hiro_renderer_component_mrb_initialize(mrb_state* mrb, mrb_value self)
 }
 
 mrb_value hiro_renderer_component_mrb_draw(mrb_state* mrb, mrb_value self) {
-  mrb_value game_object, is_animate;
+  mrb_value game_object, is_animate, scale;
   struct hiro_renderer_component* component;
   SDL_Rect distance, clip;
   SDL_RendererFlip flip;
-  mrb_int _x, _y, _clip_y, _frame;
-  mrb_bool _flip;
+  mrb_int _x, _y, _clip_y, _frame, _scale_x, _scale_y;
 
   game_object = mrb_iv_get(mrb, self, mrb_intern_lit(mrb, "@game_object"));
 
@@ -77,8 +75,14 @@ mrb_value hiro_renderer_component_mrb_draw(mrb_state* mrb, mrb_value self) {
   _y = mrb_fixnum(mrb_funcall(mrb, game_object, "y", 0));
   _frame = mrb_fixnum(mrb_iv_get(mrb, self, mrb_intern_lit(mrb, "@frame")));
 
-  _flip = mrb_bool(mrb_iv_get(mrb, self, mrb_intern_lit(mrb, "@flip")));
-  flip = _flip ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;
+  flip = SDL_FLIP_NONE;
+
+  scale = mrb_iv_get(mrb, self, mrb_intern_lit(mrb, "@scale"));
+  _scale_x = mrb_fixnum(mrb_funcall(mrb, scale, "x", 0));
+  _scale_y = mrb_fixnum(mrb_funcall(mrb, scale, "y", 0));
+
+  if(0 > _scale_x) { flip = (SDL_RendererFlip)(flip | SDL_FLIP_HORIZONTAL); }
+  if(0 > _scale_y) { flip = (SDL_RendererFlip)(flip | SDL_FLIP_VERTICAL); }
 
   distance.w = mrb_fixnum(mrb_iv_get(mrb, self, mrb_intern_lit(mrb, "@width")));
   distance.h = mrb_fixnum(mrb_iv_get(mrb, self, mrb_intern_lit(mrb, "@height")));
@@ -142,8 +146,6 @@ struct hiro_renderer_component* hiro_renderer_component_create(mrb_state* mrb, S
   component->path = path;
   component->width = surface->w;
   component->height = surface->h;
-  component->scaleX = 1;
-  component->scaleY = 1;
   component->texture = SDL_CreateTextureFromSurface(renderer, surface);
   component->renderer = renderer;
 
