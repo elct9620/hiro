@@ -21,6 +21,7 @@ class ExampleScene < Scene
     add @sprite
 
     @acc = 0
+    @moving = false
     @in_air = false
     @to_down = false
     @down_ticks = 0
@@ -58,22 +59,32 @@ class ExampleScene < Scene
       @sprite.y = @up_start if @sprite.y > @up_start
     end
     @last_ticks = ticks
+
+    @sprite.x += 1 * @acc
+    @acc += (@acc/@acc.abs).to_i * -1 if @acc != 0 && !@moving && !@in_air
+    animation = @acc.abs > 3 ? :run : :walk
+    animate_switch = @char.animator.current != animation
+    unless @in_air || @to_down
+      if @acc == 0
+        @char.animator.to(:idle) if @char.animator.current != :idle
+      else
+        @char.animator.to(animation) if animate_switch
+      end
+    end
   end
 
   def on_keyup
     Proc.new { |data|
-      @char.animator.to(:idle)
-      @acc = 0
+      case data.key
+      when Keyboard::LEFT, Keyboard::RIGHT
+        @moving = false
+      end
     }
   end
 
   def on_keydown
     Proc.new { |data|
       @char.animator.play
-      @acc += 1
-
-      animation = @acc > 3 ? :run : :walk
-      animate_switch = @char.animator.current != animation
 
       case data.key
       when Keyboard::UP
@@ -82,14 +93,13 @@ class ExampleScene < Scene
           @up_start = @sprite.y
         end
       when Keyboard::LEFT
-        # TODO: Add flip sprite support
-        @sprite.x -= 10
         @char.renderer.scale.x = -1
-        @char.animator.to(animation) if animate_switch
+        @acc -= 1 unless @acc.abs > 3
+        @moving = true
       when Keyboard::RIGHT
         @char.renderer.scale.x = 1
-        @sprite.x += 10
-        @char.animator.to(animation) if animate_switch
+        @acc += 1 unless @acc.abs > 3
+        @moving = true
       end
     }
 
