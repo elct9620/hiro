@@ -28,6 +28,7 @@
 #include "event.h"
 #include "game.h"
 #include "scene.h"
+#include "resource.h"
 #include "vector2.h"
 
 // Component
