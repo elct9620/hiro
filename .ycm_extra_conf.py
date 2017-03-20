@@ -17,7 +17,9 @@ BASE_FLAGS = [
         '-std=c++11',
         '-xc++',
         '-I/usr/lib/',
-        '-I/usr/include/'
+        '-I/usr/include/',
+        '-I./deps/mruby/include',
+        '-I./hiro-core/include'
         ]
 
 SOURCE_EXTENSIONS = [
@@ -42,8 +44,7 @@ HEADER_EXTENSIONS = [
         ]
 
 HEADER_DIRECTORIES = [
-        'include',
-        'hiro-core/include'
+        'include'
         ]
 
 def IsHeaderFile(filename):
