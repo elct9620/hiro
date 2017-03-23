@@ -110,10 +110,10 @@ int main(int argc, char** argv) {
   }
 
   // Boot Game
-  struct RClass* hiro = mrb_module_get(mrb, "Hiro");
-  mrb_value _entrypoint = mrb_mod_cv_get(mrb, hiro, mrb_intern_lit(mrb, "entrypoint"));
-  struct RClass* entrypoint = mrb_class_ptr(_entrypoint);
-  mrb_value instance = mrb_obj_new(mrb, entrypoint, 0, NULL);
+  struct RClass* hiro = mrb_class_get(mrb, "Hiro");
+  mrb_value _game_class = mrb_mod_cv_get(mrb, hiro, mrb_intern_lit(mrb, "game_class"));
+  struct RClass* game_class = mrb_class_ptr(_game_class);
+  mrb_value instance = mrb_obj_new(mrb, game_class, 0, NULL);
   mrb_funcall(mrb, instance, "start", 0);
 
   if(has_error(mrb)) {

@@ -1,6 +1,8 @@
 #ifndef _HIRO_CORE_H
 #define _HIRO_CORE_H
 
+#include <SDL2/SDL.h>
+
 #include <mruby.h>
 #include <mruby/class.h>
 #include <mruby/variable.h>

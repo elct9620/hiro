@@ -44,7 +44,14 @@ mrb_value hiro_renderer_component_mrb_initialize(mrb_state* mrb, mrb_value self)
   has_width = argc > 1 && _width > 0;
   has_height = argc > 2 && _width > 0;
 
-  component = hiro_renderer_component_create(mrb, hiro_default_renderer(mrb), path);
+  struct RClass* hiro;
+  mrb_value instance;
+
+  // TODO: Move out of this class
+  hiro = mrb_module_get(mrb, "Hiro");
+  instance = mrb_mod_cv_get(mrb, hiro, mrb_intern_lit(mrb, "instance"));
+
+  component = hiro_renderer_component_create(mrb, hiro_game_default_renderer(mrb, instance), path);
   mrb_data_init(self, component, &hiro_renderer_component_type);
 
   _width = has_width ? _width : component->width;

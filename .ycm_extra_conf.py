@@ -19,6 +19,7 @@ BASE_FLAGS = [
         '-I/usr/lib/',
         '-I/usr/include/',
         '-I./deps/mruby/include',
+        '-I./hiro-exe/include',
         '-I./hiro-core/include'
         ]
 

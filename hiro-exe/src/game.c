@@ -1,4 +1,5 @@
 #include "game.h"
+#include "../../hiro-core/include/core.h"
 
 const struct mrb_data_type hiro_game_type = { "Game", hiro_game_mrb_free };
 

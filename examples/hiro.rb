@@ -120,4 +120,4 @@ Event.on Event::KEYDOWN do |data|
   Hiro.quit! if data.key == Keyboard::ESC
 end
 
-Hiro.entrypoint = HiroGame
+Hiro.game_class = HiroGame
