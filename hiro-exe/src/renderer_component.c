@@ -48,7 +48,7 @@ mrb_value hiro_renderer_component_mrb_initialize(mrb_state* mrb, mrb_value self)
   mrb_value instance;
 
   // TODO: Move out of this class
-  hiro = mrb_module_get(mrb, "Hiro");
+  hiro = mrb_class_get(mrb, "Hiro");
   instance = mrb_mod_cv_get(mrb, hiro, mrb_intern_lit(mrb, "instance"));
 
   component = hiro_renderer_component_create(mrb, hiro_game_default_renderer(mrb, instance), path);
