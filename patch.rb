@@ -1,5 +1,7 @@
 require 'shellwords'
 
+BASE_PATH = File.expand_path(File.dirname(__FILE__))
+
 # Patch for `mruby-1.2.0` to support third-party library
 module MRuby
   module Gem
@@ -18,21 +20,12 @@ module MRuby
           false
         end
       end
+
+      def hiro(name, *arguments)
+        name = "hiro-#{name}"
+        arguments = arguments.last.kind_of?(Hash) ? arguments.pop : {}
+        add_dependency(name, arguments.merge(path: File.join(BASE_PATH, name)))
+      end
     end
   end
-end
-
-MRuby::Gem::Specification.new('hiro') do |spec|
-  spec.license = 'Apache 2.0'
-  spec.author  = ['Aotokitsuruya']
-  spec.summary = 'The 2D game framework based on mruby'
-
-  spec.search_package(:sdl2)
-  spec.search_package(:SDL2_image)
-
-  spec.bins = %w(hiro)
-
-  spec.add_dependency('mruby-compiler', core: 'mruby-compiler')
-  spec.add_dependency('mruby-print', core: 'mruby-print')
-  spec.add_dependency('mruby-object-ext', core: 'mruby-object-ext')
 end
