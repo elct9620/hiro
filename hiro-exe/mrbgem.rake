@@ -1,5 +1,3 @@
-load File.join(File.expand_path(File.dirname(__FILE__)), '../patch.rake')
-
 MRuby::Gem::Specification.new('hiro') do |spec|
   spec.license = 'Apache 2.0'
   spec.author  = ['Aotokitsuruya']
