@@ -4,7 +4,7 @@ class Game
     start
   end
 
-  def update
+  def update(ticks)
   end
 
   def draw

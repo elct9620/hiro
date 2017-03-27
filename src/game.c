@@ -44,8 +44,19 @@ void hiro_game_draw(mrb_state* mrb, mrb_value self) {
   mrb_funcall(mrb, self, "draw", 0);
 }
 
-void hiro_game_update(mrb_state* mrb, mrb_value self) {
-  mrb_funcall(mrb, self, "update", 0);
+void hiro_game_update(mrb_state* mrb, mrb_value self, mrb_int ticks) {
+  mrb_funcall(mrb, self, "update", 1, mrb_fixnum_value(ticks));
+}
+
+void hiro_game_poll_event(mrb_state* mrb, mrb_value self) {
+  SDL_Event event;
+  while(SDL_PollEvent(&event)) {
+    switch(event.type) {
+      case SDL_QUIT:
+      case SDL_KEYDOWN:
+        mrb_funcall(mrb, self, "stop!", 0);
+    }
+  }
 }
 
 mrb_value hiro_game_mrb_init(mrb_state* mrb, mrb_value self) {
@@ -59,7 +70,6 @@ mrb_value hiro_game_mrb_init(mrb_state* mrb, mrb_value self) {
 
 mrb_value hiro_game_mrb_start(mrb_state* mrb, mrb_value self) {
   struct hiro_game* game;
-  SDL_Event ev;
 
   game = hiro_game_ptr(mrb, r_iv_get("@data"));
 
@@ -73,16 +83,8 @@ mrb_value hiro_game_mrb_start(mrb_state* mrb, mrb_value self) {
   while(!game->stop) {
     current_ticks = SDL_GetTicks();
 
-    while(SDL_PollEvent(&ev)) {
-      // TODO: Implement Hiro Event Manager
-      switch(ev.type) {
-        case SDL_QUIT:
-        case SDL_KEYDOWN:
-          game->stop = 1;
-      }
-    }
-
-    hiro_game_update(mrb, self);
+    hiro_game_poll_event(mrb, self);
+    hiro_game_update(mrb, self, current_ticks);
 
     if(current_ticks > next_update_ticks) {
       // TODO: Make sure update ticks not overflow
@@ -97,6 +99,15 @@ mrb_value hiro_game_mrb_start(mrb_state* mrb, mrb_value self) {
   return self;
 }
 
+mrb_value hiro_game_mrb_stop_bang(mrb_state* mrb, mrb_value self) {
+  struct hiro_game *game;
+  game = hiro_game_ptr(mrb, r_iv_get("@data"));
+
+  game->stop = 1;
+
+  return self;
+}
+
 void hiro_game_init(mrb_state* mrb) {
   struct RClass* game;
 
@@ -104,4 +115,5 @@ void hiro_game_init(mrb_state* mrb) {
 
   mrb_define_method(mrb, game, "init", hiro_game_mrb_init, MRB_ARGS_NONE());
   mrb_define_method(mrb, game, "start", hiro_game_mrb_start, MRB_ARGS_NONE());
+  mrb_define_method(mrb, game, "stop!", hiro_game_mrb_stop_bang, MRB_ARGS_NONE());
 }
