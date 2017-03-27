@@ -58,11 +58,7 @@ void hiro_game_update(mrb_state* mrb, mrb_value self, mrb_int ticks) {
 void hiro_game_poll_event(mrb_state* mrb, mrb_value self) {
   SDL_Event event;
   while(SDL_PollEvent(&event)) {
-    switch(event.type) {
-      case SDL_QUIT:
-      case SDL_KEYDOWN:
-        mrb_funcall(mrb, self, "stop!", 0);
-    }
+    hiro_event_emit(mrb, event);
   }
 }
 

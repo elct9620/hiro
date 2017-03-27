@@ -105,7 +105,11 @@ int main(int argc, char** argv) {
 
   execute(mrb, root, argv[1]);
 
+  // TODO: Close game when ruby raise error
   if(has_error(mrb)) {
+    free(root);
+    mrb_close(mrb);
+    SDL_Quit();
     return 1;
   }
 

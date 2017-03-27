@@ -35,4 +35,5 @@ MRuby::Gem::Specification.new('hiro') do |spec|
   spec.add_dependency('mruby-compiler', core: 'mruby-compiler')
   spec.add_dependency('mruby-print', core: 'mruby-print')
   spec.add_dependency('mruby-object-ext', core: 'mruby-object-ext')
+  spec.add_dependency('mruby-hash-ext', core: 'mruby-hash-ext')
 end
