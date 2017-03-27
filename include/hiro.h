@@ -8,6 +8,7 @@
 #include <mruby/data.h>
 #include <mruby/class.h>
 #include <mruby/variable.h>
+#include <mruby/string.h>
 
 // Hiro
 #include "wrapper.h"
@@ -15,3 +16,4 @@
 
 #include "core.h"
 #include "game.h"
+#include "config.h"

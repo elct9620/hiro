@@ -16,9 +16,16 @@ struct hiro_game* hiro_create_game(mrb_state* mrb) {
   SDL_Window* window;
   SDL_Renderer* renderer;
 
+  const char* name;
+  mrb_int width, height;
+
+  name = mrb_str_to_cstr(mrb, hiro_config_get("title"));
+  width = mrb_fixnum(hiro_config_get("width"));
+  height = mrb_fixnum(hiro_config_get("height"));
+
   // Create Window
   // TODO: Read from params or config
-  window = SDL_CreateWindow("Hiro Framework", 0, 0, 1280, 720, SDL_WINDOW_SHOWN);
+  window = SDL_CreateWindow(name, 0, 0, width, height, SDL_WINDOW_SHOWN);
   if(!window) {
     SDL_DestroyWindow(window);
     mrb_raisef(mrb, E_RUNTIME_ERROR, "Window initialize failed!");
