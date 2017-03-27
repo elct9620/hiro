@@ -5,6 +5,30 @@
 
 #include "hiro.h"
 
+struct hiro_game {
+  int           stop;
+  SDL_Window*   window;
+  SDL_Renderer* renderer;
+};
+
+static void hiro_free_game(mrb_state*, void* ptr);
+static const struct mrb_data_type hiro_game_type = { "game", hiro_free_game };
+mrb_value hiro_game_object(mrb_state*, struct hiro_game*);
+struct hiro_game* hiro_game_ptr(mrb_state*, mrb_value);
+struct hiro_game* hiro_create_game(mrb_state*);
+
+void hiro_free_game(mrb_state* mrb, void *ptr) {
+  struct hiro_game* game = (struct hiro_game*)ptr;
+  if(game) {
+    SDL_DestroyWindow(game->window);
+    SDL_DestroyRenderer(game->renderer);
+    mrb_free(mrb, game);
+  }
+}
+
+void hiro_game_draw(mrb_state*, mrb_value);
+void hiro_game_update(mrb_state*, mrb_value);
+
 mrb_value hiro_game_mrb_init(mrb_state*, mrb_value);
 mrb_value hiro_game_mrb_start(mrb_state*, mrb_value);
 
