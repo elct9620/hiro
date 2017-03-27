@@ -20,11 +20,9 @@ struct hiro_game* hiro_create_game(mrb_state*);
 
 void hiro_free_game(mrb_state* mrb, void *ptr) {
   struct hiro_game* game = (struct hiro_game*)ptr;
-  if(game) {
-    SDL_DestroyWindow(game->window);
-    SDL_DestroyRenderer(game->renderer);
-    mrb_free(mrb, game);
-  }
+  SDL_DestroyWindow(game->window);
+  SDL_DestroyRenderer(game->renderer);
+  mrb_free(mrb, game);
 }
 
 // C API
