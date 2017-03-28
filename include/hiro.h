@@ -17,6 +17,7 @@
 
 // Hiro
 #include "wrapper.h"
+#include "helper.h"
 #include "hash.h"
 #include "object.h"
 

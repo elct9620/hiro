@@ -57,7 +57,7 @@ void hiro_game_update(mrb_state* mrb, mrb_value self, mrb_int ticks) {
 
   argv[0] = mrb_fixnum_value(ticks);
   hiro_scene_update(mrb, r_iv_get("@current_scene"), 1, argv);
-  mrb_funcall(mrb, self, "update", 1, argv);
+  mrb_funcall_argv(mrb, self, mrb_intern_lit(mrb, "update"), 1, argv);
 }
 
 void hiro_game_poll_event(mrb_state* mrb, mrb_value self) {
