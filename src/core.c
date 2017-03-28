@@ -8,8 +8,7 @@ mrb_value hiro_core_mrb_start(mrb_state* mrb, mrb_value self) {
   game = mrb_class_ptr(game_class);
 
   instance = mrb_obj_new(mrb, game, 0, NULL);
-  // TODO: Set instance to Hiro or other global module/class
-  mrb_cv_set(mrb, game_class, mrb_intern_lit(mrb, "@@instance"), instance);
+  hiro_game_instance_set(mrb, instance);
   mrb_funcall(mrb, instance, "start", 0, NULL);
 
   return self;

@@ -81,6 +81,20 @@ mrb_value hiro_game_current_scene(mrb_state* mrb, mrb_value self) {
   return scene_object;
 }
 
+void hiro_game_instance_set(mrb_state* mrb, mrb_value instance) {
+  struct RClass* game;
+
+  game = mrb_class_get(mrb, "Game");
+  mrb_mod_cv_set(mrb, game, mrb_intern_lit(mrb, "@@instance"), instance);
+}
+
+mrb_value hiro_game_instance_get(mrb_state* mrb) {
+  struct RClass* game;
+
+  game = mrb_class_get(mrb, "Game");
+  return mrb_mod_cv_get(mrb, game, mrb_intern_lit(mrb, "@@instance"));
+}
+
 mrb_value hiro_game_mrb_init(mrb_state* mrb, mrb_value self) {
   struct hiro_game* game;
 

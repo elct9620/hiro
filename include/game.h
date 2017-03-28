@@ -32,6 +32,9 @@ void hiro_game_poll_event(mrb_state*, mrb_value);
 
 mrb_value hiro_game_current_scene(mrb_state*, mrb_value);
 
+void hiro_game_instance_set(mrb_state*, mrb_value);
+mrb_value hiro_game_instance_get(mrb_state*);
+
 // Ruby API
 mrb_value hiro_game_mrb_init(mrb_state*, mrb_value);
 mrb_value hiro_game_mrb_start(mrb_state*, mrb_value);
