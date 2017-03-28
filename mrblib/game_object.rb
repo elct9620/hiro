@@ -15,7 +15,7 @@ class GameObject
     @components.push(component)
   end
 
-  def update; end
+  def update(ticks); end
 
   def draw; end
 end

@@ -1,6 +1,6 @@
 # Component
 class Component
-  def update; end
+  def update(ticks); end
 
   def draw; end
 end

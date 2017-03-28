@@ -10,6 +10,7 @@
 #include <mruby/variable.h>
 #include <mruby/string.h>
 #include <mruby/hash.h>
+#include <mruby/array.h>
 
 // Macros
 #define HIRO_INIT(module) hiro_##module##_init(mrb)

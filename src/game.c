@@ -48,11 +48,16 @@ struct hiro_game* hiro_create_game(mrb_state* mrb) {
 }
 
 void hiro_game_draw(mrb_state* mrb, mrb_value self) {
+  hiro_scene_draw(mrb, r_iv_get("@current_scene"), 0, NULL);
   mrb_funcall(mrb, self, "draw", 0);
 }
 
 void hiro_game_update(mrb_state* mrb, mrb_value self, mrb_int ticks) {
-  mrb_funcall(mrb, self, "update", 1, mrb_fixnum_value(ticks));
+  mrb_value argv[1];
+
+  argv[0] = mrb_fixnum_value(ticks);
+  hiro_scene_update(mrb, r_iv_get("@current_scene"), 1, argv);
+  mrb_funcall(mrb, self, "update", 1, argv);
 }
 
 void hiro_game_poll_event(mrb_state* mrb, mrb_value self) {
@@ -62,11 +67,26 @@ void hiro_game_poll_event(mrb_state* mrb, mrb_value self) {
   }
 }
 
+mrb_value hiro_game_current_scene(mrb_state* mrb, mrb_value self) {
+  struct RClass* scene;
+  mrb_value scene_object;
+
+  scene_object = r_iv_get("@current_scene");
+  if(!mrb_nil_p(scene_object)) {
+    return scene_object;
+  }
+
+  scene = mrb_class_ptr(hiro_config_get("default_scene"));
+  scene_object = mrb_obj_new(mrb, scene, 0, NULL);
+  return scene_object;
+}
+
 mrb_value hiro_game_mrb_init(mrb_state* mrb, mrb_value self) {
   struct hiro_game* game;
 
   game = hiro_create_game(mrb);
   r_iv_set("@data", hiro_game_object(mrb, game));
+  r_iv_set("@current_scene", hiro_game_current_scene(mrb, self));
 
   return self;
 }

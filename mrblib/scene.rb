@@ -9,7 +9,7 @@ class Scene
     @objects.push(object)
   end
 
-  def update; end
+  def update(ticks); end
 
   def draw; end
 end

@@ -37,4 +37,5 @@ class Config
   register :title, 'Hiro Framework'
   register :width, 1080
   register :height, 720
+  register :default_scene, Scene
 end
