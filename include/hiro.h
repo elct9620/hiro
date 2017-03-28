@@ -11,6 +11,9 @@
 #include <mruby/string.h>
 #include <mruby/hash.h>
 
+// Macros
+#define HIRO_INIT(module) hiro_##module##_init(mrb)
+
 // Hiro
 #include "wrapper.h"
 #include "hash.h"
@@ -20,3 +23,7 @@
 #include "game.h"
 #include "config.h"
 #include "event.h"
+
+#include "game_object.h"
+#include "scene.h"
+#include "component.h"
