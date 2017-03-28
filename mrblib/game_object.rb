@@ -10,16 +10,6 @@ class GameObject
     @position = Vector2.new(0, 0)
   end
 
-  def add(child)
-    return unless child.is_a?(GameObject)
-    @children.push(child)
-  end
-
-  def component(component)
-    return unless component.is_a?(Component)
-    @components.push(component)
-  end
-
   def x
     @position.x
   end

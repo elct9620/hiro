@@ -5,6 +5,8 @@
 
 #include "hiro.h"
 
+mrb_bool hiro_is_component(mrb_state*, mrb_value);
+
 void hiro_component_update(mrb_state*, mrb_value, mrb_int, mrb_value*);
 void hiro_component_draw(mrb_state*, mrb_value, mrb_int, mrb_value*);
 
