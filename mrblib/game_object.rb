@@ -1,6 +1,7 @@
 # Game Object
 class GameObject
   attr_accessor :position
+  attr_reader :parent
 
   def initialize
     @parent = nil
