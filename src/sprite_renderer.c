@@ -46,8 +46,8 @@ mrb_value hiro_sprite_renderer_mrb_draw(mrb_state* mrb, mrb_value self) {
   SDL_Rect distance;
 
   renderer = hiro_sprite_renderer_ptr(mrb, r_iv_get("@data"));
-  distance.x = 0;
-  distance.y = 0;
+  distance.x = mrb_fixnum(mrb_funcall(mrb, self, "x", 0, NULL));
+  distance.y = mrb_fixnum(mrb_funcall(mrb, self, "y", 0, NULL));
   distance.w = renderer->width;
   distance.h = renderer->height;
 
