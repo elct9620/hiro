@@ -38,4 +38,5 @@ class Config
   register :width, 1080
   register :height, 720
   register :default_scene, Scene
+  register :game_class, Game
 end

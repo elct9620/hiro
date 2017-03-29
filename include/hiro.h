@@ -29,3 +29,4 @@
 #include "game_object.h"
 #include "scene.h"
 #include "component.h"
+#include "components/sprite_renderer.h"

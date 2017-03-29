@@ -26,6 +26,9 @@ void hiro_free_game(mrb_state* mrb, void *ptr) {
 }
 
 // C API
+
+#define HIRO_GAME_PTR() hiro_game_ptr(mrb, mrb_iv_get(mrb, hiro_game_instance_get(mrb), mrb_intern_lit(mrb, "@data")))
+
 void hiro_game_draw(mrb_state*, mrb_value);
 void hiro_game_update(mrb_state*, mrb_value, mrb_int);
 void hiro_game_poll_event(mrb_state*, mrb_value);

@@ -100,13 +100,15 @@ mrb_value hiro_game_mrb_init(mrb_state* mrb, mrb_value self) {
 
   game = hiro_create_game(mrb);
   r_iv_set("@data", hiro_game_object(mrb, game));
-  r_iv_set("@current_scene", hiro_game_current_scene(mrb, self));
 
   return self;
 }
 
 mrb_value hiro_game_mrb_start(mrb_state* mrb, mrb_value self) {
   struct hiro_game* game;
+
+  // TODO: Find default scene
+  r_iv_set("@current_scene", hiro_game_current_scene(mrb, self));
 
   game = hiro_game_ptr(mrb, r_iv_get("@data"));
 
