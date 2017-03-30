@@ -21,6 +21,7 @@
 #include "hash.h"
 #include "object.h"
 #include "vector2.h"
+#include "rectangle.h"
 
 #include "core.h"
 #include "game.h"

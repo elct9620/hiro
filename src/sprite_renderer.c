@@ -57,6 +57,53 @@ struct hiro_vec2 hiro_sprite_renderer_position(mrb_state* mrb, mrb_value self) {
   return position;
 }
 
+struct hiro_rect hiro_sprite_renderer_bound(mrb_state* mrb, mrb_value self) {
+  mrb_value _bound;
+  struct hiro_rect bound;
+
+  _bound = r_iv_get("@bound");
+  bound.x = mrb_fixnum(mrb_funcall(mrb, self, "x", 0, NULL));
+  bound.y = mrb_fixnum(mrb_funcall(mrb, self, "y", 0, NULL));
+  bound.width = mrb_fixnum(mrb_funcall(mrb, self, "width", 0, NULL));
+  bound.height = mrb_fixnum(mrb_funcall(mrb, self, "height", 0, NULL));
+
+  return bound;
+}
+
+void hiro_sprite_renderer_draw(struct hiro_sprite_renderer* renderer, struct hiro_vec2 position, struct hiro_vec2 size, struct hiro_vec2 scale) {
+  SDL_Rect distance;
+  SDL_RendererFlip flip;
+
+  flip = hiro_sprite_renderer_flip(scale.x, scale.y);
+
+  distance.x = position.x;
+  distance.y = position.y;
+  distance.w = size.x > 0 ? size.x : renderer->width;
+  distance.h = size.y > 0 ? size.y : renderer->height;
+
+  SDL_RenderCopyEx(renderer->renderer, renderer->texture, NULL, &distance, 0, NULL, flip);
+}
+
+void hiro_sprite_renderer_draw_clip(struct hiro_sprite_renderer* renderer, struct hiro_vec2 position, struct hiro_rect bound, struct hiro_vec2 scale) {
+  SDL_Rect distance, clip;
+  SDL_RendererFlip flip;
+
+  flip = hiro_sprite_renderer_flip(scale.x, scale.y);
+
+  distance.x = position.x;
+  distance.y = position.y;
+  distance.w = renderer->width;
+  distance.h = renderer->height;
+
+  clip.x = bound.x;
+  clip.y = bound.y;
+  clip.w = bound.width;
+  clip.h = bound.height;
+
+  SDL_RenderCopyEx(renderer->renderer, renderer->texture, NULL, &distance, 0, NULL, flip);
+}
+
+
 mrb_value hiro_sprite_renderer_mrb_init(mrb_state* mrb, mrb_value self) {
   struct hiro_game* game;
   struct hiro_sprite_renderer* renderer;
@@ -71,28 +118,26 @@ mrb_value hiro_sprite_renderer_mrb_init(mrb_state* mrb, mrb_value self) {
 
 mrb_value hiro_sprite_renderer_mrb_draw(mrb_state* mrb, mrb_value self) {
   struct hiro_sprite_renderer* renderer;
-  SDL_Rect distance;
-  SDL_RendererFlip flip;
-
   struct hiro_vec2 size, position, scale;
+  struct hiro_rect bound;
+  mrb_bool clip;
 
   size = hiro_sprite_renderer_size(mrb, self);
   scale = hiro_sprite_renderer_scale(mrb, self);
   position = hiro_sprite_renderer_position(mrb, self);
+  bound = hiro_sprite_renderer_bound(mrb, self);
 
-  flip = hiro_sprite_renderer_flip(scale.x, scale.y);
-
+  clip = mrb_bool(r_iv_get("@clip"));
   renderer = hiro_sprite_renderer_ptr(mrb, r_iv_get("@data"));
-  distance.x = position.x;
-  distance.y = position.y;
-  distance.w = size.x > 0 ? size.x : renderer->width;
-  distance.h = size.y > 0 ? size.y : renderer->height;
 
-  SDL_RenderCopyEx(renderer->renderer, renderer->texture, NULL, &distance, 0, NULL, flip);
+  if(clip) {
+    hiro_sprite_renderer_draw(renderer, position, size, scale);
+  } else {
+    hiro_sprite_renderer_draw_clip(renderer, position, bound, scale);
+  }
 
   return self;
 }
-
 
 void hiro_sprite_renderer_init(mrb_state* mrb, struct RClass* component) {
   struct RClass* renderer;

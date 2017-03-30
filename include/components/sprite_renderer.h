@@ -30,6 +30,10 @@ SDL_RendererFlip hiro_sprite_renderer_flip(mrb_int x, mrb_int y);
 struct hiro_vec2 hiro_sprite_renderer_scale(mrb_state*, mrb_value);
 struct hiro_vec2 hiro_sprite_renderer_size(mrb_state*, mrb_value);
 struct hiro_vec2 hiro_sprite_renderer_position(mrb_state*, mrb_value);
+struct hiro_rect hiro_sprite_renderer_bound(mrb_state*, mrb_value);
+
+void hiro_sprite_renderer_draw(struct hiro_sprite_renderer*, struct hiro_vec2, struct hiro_vec2, struct hiro_vec2);
+void hiro_sprite_renderer_draw_clip(struct hiro_sprite_renderer*, struct hiro_vec2, struct hiro_rect, struct hiro_vec2);
 
 // Ruby API
 mrb_value hiro_sprite_renderer_mrb_init(mrb_state*, mrb_value);
