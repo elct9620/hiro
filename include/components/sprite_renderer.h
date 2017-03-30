@@ -26,7 +26,10 @@ void hiro_free_sprite_renderer(mrb_state* mrb, void *ptr) {
 }
 
 // C API
-
+SDL_RendererFlip hiro_sprite_renderer_flip(mrb_int x, mrb_int y);
+struct hiro_vec2 hiro_sprite_renderer_scale(mrb_state*, mrb_value);
+struct hiro_vec2 hiro_sprite_renderer_size(mrb_state*, mrb_value);
+struct hiro_vec2 hiro_sprite_renderer_position(mrb_state*, mrb_value);
 
 // Ruby API
 mrb_value hiro_sprite_renderer_mrb_init(mrb_state*, mrb_value);

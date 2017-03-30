@@ -30,6 +30,33 @@ struct hiro_sprite_renderer* hiro_create_sprite_renderer(mrb_state* mrb, SDL_Ren
   return renderer;
 }
 
+SDL_RendererFlip hiro_sprite_renderer_flip(mrb_int x, mrb_int y) {
+  SDL_RendererFlip flip = SDL_FLIP_NONE;
+  if(0 > x) { flip = (SDL_RendererFlip)(flip | SDL_FLIP_HORIZONTAL); }
+  if(0 > y) { flip = (SDL_RendererFlip)(flip | SDL_FLIP_VERTICAL); }
+  return flip;
+}
+
+struct hiro_vec2 hiro_sprite_renderer_scale(mrb_state* mrb, mrb_value self) {
+  mrb_value scale;
+  scale = mrb_funcall(mrb, self, "scale", 0, NULL);
+  return hiro_sprite_renderer_position(mrb, scale);
+}
+
+struct hiro_vec2 hiro_sprite_renderer_size(mrb_state* mrb, mrb_value self) {
+  struct hiro_vec2 size;
+  size.x = mrb_fixnum(mrb_funcall(mrb, self, "width", 0, NULL));
+  size.y = mrb_fixnum(mrb_funcall(mrb, self, "height", 0, NULL));
+  return size;
+}
+
+struct hiro_vec2 hiro_sprite_renderer_position(mrb_state* mrb, mrb_value self) {
+  struct hiro_vec2 position;
+  position.x = mrb_fixnum(mrb_funcall(mrb, self, "x", 0, NULL));
+  position.y = mrb_fixnum(mrb_funcall(mrb, self, "y", 0, NULL));
+  return position;
+}
+
 mrb_value hiro_sprite_renderer_mrb_init(mrb_state* mrb, mrb_value self) {
   struct hiro_game* game;
   struct hiro_sprite_renderer* renderer;
@@ -46,26 +73,20 @@ mrb_value hiro_sprite_renderer_mrb_draw(mrb_state* mrb, mrb_value self) {
   struct hiro_sprite_renderer* renderer;
   SDL_Rect distance;
   SDL_RendererFlip flip;
-  mrb_value scale;
-  mrb_int width, height, scale_x, scale_y;
 
-  width = mrb_fixnum(mrb_funcall(mrb, self, "width", 0, NULL));
-  height = mrb_fixnum(mrb_funcall(mrb, self, "height", 0, NULL));
+  struct hiro_vec2 size, position, scale;
 
-  // TODO: Create render group for each game object
-  scale = mrb_funcall(mrb, self, "scale", 0, NULL);
-  scale_x = mrb_fixnum(mrb_funcall(mrb, scale, "x", 0, NULL));
-  scale_y = mrb_fixnum(mrb_funcall(mrb, scale, "y", 0, NULL));
+  size = hiro_sprite_renderer_size(mrb, self);
+  scale = hiro_sprite_renderer_scale(mrb, self);
+  position = hiro_sprite_renderer_position(mrb, self);
 
-  flip = SDL_FLIP_NONE;
-  if(0 > scale_x) { flip = (SDL_RendererFlip)(flip | SDL_FLIP_HORIZONTAL); }
-  if(0 > scale_y) { flip = (SDL_RendererFlip)(flip | SDL_FLIP_VERTICAL); }
+  flip = hiro_sprite_renderer_flip(scale.x, scale.y);
 
   renderer = hiro_sprite_renderer_ptr(mrb, r_iv_get("@data"));
-  distance.x = mrb_fixnum(mrb_funcall(mrb, self, "x", 0, NULL));
-  distance.y = mrb_fixnum(mrb_funcall(mrb, self, "y", 0, NULL));
-  distance.w = width > 0 ? width: renderer->width;
-  distance.h = height > 0 ? height : renderer->height;
+  distance.x = position.x;
+  distance.y = position.y;
+  distance.w = size.x > 0 ? size.x : renderer->width;
+  distance.h = size.y > 0 ? size.y : renderer->height;
 
   SDL_RenderCopyEx(renderer->renderer, renderer->texture, NULL, &distance, 0, NULL, flip);
 

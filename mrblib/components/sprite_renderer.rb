@@ -1,13 +1,14 @@
 # Component / Sprite Renderer
 class SpriteRenderer < Component
-  attr_accessor :width, :height
+  attr_accessor :width, :height, :clip, :bound
 
   def initialize(path, width = nil, height = nil)
     super()
     @path = path
     @width = width || 0
     @height = height || 0
-    @scale = Vector2.new(1, 1)
+    @clip = false
+    @bound = Rectangle.new(0, 0, 0, 0)
 
     init
   end

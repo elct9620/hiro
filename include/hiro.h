@@ -20,6 +20,7 @@
 #include "helper.h"
 #include "hash.h"
 #include "object.h"
+#include "vector2.h"
 
 #include "core.h"
 #include "game.h"
