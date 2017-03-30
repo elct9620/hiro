@@ -26,6 +26,9 @@ class ExampleScene < Scene
     @gamepad.add @gamepad2
     add @gamepad
 
+    @gamepad2.sprite_renderer.clip = true
+    @gamepad2.sprite_renderer.bound = Rectangle.new(0, 0, 50, 50)
+
     Event.on :keydown do |data|
       case data[:key]
       when Keyboard::LEFT then @gamepad.x -= 5

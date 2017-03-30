@@ -62,10 +62,10 @@ struct hiro_rect hiro_sprite_renderer_bound(mrb_state* mrb, mrb_value self) {
   struct hiro_rect bound;
 
   _bound = r_iv_get("@bound");
-  bound.x = mrb_fixnum(mrb_funcall(mrb, self, "x", 0, NULL));
-  bound.y = mrb_fixnum(mrb_funcall(mrb, self, "y", 0, NULL));
-  bound.width = mrb_fixnum(mrb_funcall(mrb, self, "width", 0, NULL));
-  bound.height = mrb_fixnum(mrb_funcall(mrb, self, "height", 0, NULL));
+  bound.x = mrb_fixnum(mrb_funcall(mrb, _bound, "x", 0, NULL));
+  bound.y = mrb_fixnum(mrb_funcall(mrb, _bound, "y", 0, NULL));
+  bound.width = mrb_fixnum(mrb_funcall(mrb, _bound, "width", 0, NULL));
+  bound.height = mrb_fixnum(mrb_funcall(mrb, _bound, "height", 0, NULL));
 
   return bound;
 }
@@ -92,15 +92,15 @@ void hiro_sprite_renderer_draw_clip(struct hiro_sprite_renderer* renderer, struc
 
   distance.x = position.x;
   distance.y = position.y;
-  distance.w = renderer->width;
-  distance.h = renderer->height;
+  distance.w = bound.width;
+  distance.h = bound.height;
 
   clip.x = bound.x;
   clip.y = bound.y;
   clip.w = bound.width;
   clip.h = bound.height;
 
-  SDL_RenderCopyEx(renderer->renderer, renderer->texture, NULL, &distance, 0, NULL, flip);
+  SDL_RenderCopyEx(renderer->renderer, renderer->texture, &clip, &distance, 0, NULL, flip);
 }
 
 
@@ -131,9 +131,9 @@ mrb_value hiro_sprite_renderer_mrb_draw(mrb_state* mrb, mrb_value self) {
   renderer = hiro_sprite_renderer_ptr(mrb, r_iv_get("@data"));
 
   if(clip) {
-    hiro_sprite_renderer_draw(renderer, position, size, scale);
-  } else {
     hiro_sprite_renderer_draw_clip(renderer, position, bound, scale);
+  } else {
+    hiro_sprite_renderer_draw(renderer, position, size, scale);
   }
 
   return self;
