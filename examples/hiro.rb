@@ -26,6 +26,8 @@ class ExampleScene < Scene
     @gamepad.add @gamepad2
     add @gamepad
 
+    @gamepad.scale.x = -1
+
     Event.on :keydown do |data|
       case data[:key]
       when Keyboard::LEFT then @gamepad.x -= 5

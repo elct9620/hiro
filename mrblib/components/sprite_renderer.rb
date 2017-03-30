@@ -7,6 +7,7 @@ class SpriteRenderer < Component
     @path = path
     @width = width || 0
     @height = height || 0
+    @scale = Vector2.new(1, 1)
 
     init
   end
@@ -23,5 +24,10 @@ class SpriteRenderer < Component
   def y
     return game_object.y if parent.nil?
     game_object.y + parent.y
+  end
+
+  def scale
+    return game_object.scale if parent.nil?
+    game_object.scale * parent.scale
   end
 end

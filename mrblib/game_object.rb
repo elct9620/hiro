@@ -1,13 +1,14 @@
 # Game Object
 class GameObject
   attr_accessor :position
-  attr_reader :parent
+  attr_reader :parent, :scale
 
   def initialize
     @parent = nil
     @children = []
     @components = {}
     @position = Vector2.new(0, 0)
+    @scale = Vector2.new(1, 1)
   end
 
   def x
