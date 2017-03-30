@@ -6,7 +6,7 @@ class GameObject
   def initialize
     @parent = nil
     @children = []
-    @components = []
+    @components = {}
     @position = Vector2.new(0, 0)
   end
 
@@ -29,4 +29,13 @@ class GameObject
   def update(ticks); end
 
   def draw; end
+
+  def respond_to_missing?(name)
+    super
+  end
+
+  def method_missing(name, *args, &block)
+    return @components[name] if @components.has_key?(name)
+    super
+  end
 end

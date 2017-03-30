@@ -19,7 +19,7 @@ class Config
     configs[name.to_sym]
   end
 
-  def self.respond_to_missing?(name, include_private = false)
+  def self.respond_to_missing?(name)
     super
   end
 

@@ -12,13 +12,13 @@ mrb_bool hiro_is_game_object(mrb_state* mrb, mrb_value object) {
 }
 
 void hiro_game_object_update(mrb_state* mrb, mrb_value self, mrb_int argc, mrb_value* argv) {
-  HIRO_EACH_FN(self, "@components", hiro_component_update, argc, argv);
+  HIRO_EACH_HASH_FN(self, "@components", hiro_component_update, argc, argv);
   HIRO_EACH_FN(self, "@children", hiro_game_object_update, argc, argv);
   mrb_funcall_argv(mrb, self, mrb_intern_lit(mrb, "update"), argc, argv);
 }
 
 void hiro_game_object_draw(mrb_state* mrb, mrb_value self, mrb_int argc, mrb_value* argv) {
-  HIRO_EACH_FN(self, "@components", hiro_component_draw, argc, argv);
+  HIRO_EACH_HASH_FN(self, "@components", hiro_component_draw, argc, argv);
   HIRO_EACH_FN(self, "@children", hiro_game_object_draw, argc, argv);
   mrb_funcall(mrb, self, "draw", argc, argv);
 }
@@ -40,7 +40,7 @@ mrb_value hiro_game_object_mrb_add(mrb_state* mrb, mrb_value self) {
 }
 
 mrb_value hiro_game_object_mrb_use(mrb_state* mrb, mrb_value self) {
-  mrb_value components, component;
+  mrb_value components, component, name;
 
   components = r_iv_get("@components");
   mrb_get_args(mrb, "o", &component);
@@ -49,7 +49,8 @@ mrb_value hiro_game_object_mrb_use(mrb_state* mrb, mrb_value self) {
   }
 
   // TODO: If game object present, remove self from old game object
-  mrb_ary_push(mrb, components, component);
+  name = mrb_funcall(mrb, component, "name", 0, NULL);
+  mrb_hash_set(mrb, components, name, component);
   mrb_iv_set(mrb, component, mrb_intern_lit(mrb, "@game_object"), self);
 
   return mrb_true_value();

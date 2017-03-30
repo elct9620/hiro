@@ -4,7 +4,6 @@ class Component
 
   def initialize
     @game_object = nil
-    puts name
   end
 
   def name
