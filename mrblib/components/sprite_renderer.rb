@@ -1,9 +1,12 @@
 # Component / Sprite Renderer
 class SpriteRenderer < Component
+  attr_accessor :width, :height
+
   def initialize(path, width = nil, height = nil)
+    super()
     @path = path
-    @width = width
-    @height = height
+    @width = width || 0
+    @height = height || 0
 
     init
   end

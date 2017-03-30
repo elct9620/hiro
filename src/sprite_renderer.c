@@ -34,6 +34,7 @@ mrb_value hiro_sprite_renderer_mrb_init(mrb_state* mrb, mrb_value self) {
   struct hiro_game* game;
   struct hiro_sprite_renderer* renderer;
 
+  // TODO: Accept custom renderer or auto split by renderer
   game = HIRO_GAME_PTR();
   renderer = hiro_create_sprite_renderer(mrb, game->renderer, mrb_str_to_cstr(mrb, r_iv_get("@path")));
   r_iv_set("@data", hiro_sprite_renderer_object(mrb, renderer));
@@ -44,12 +45,16 @@ mrb_value hiro_sprite_renderer_mrb_init(mrb_state* mrb, mrb_value self) {
 mrb_value hiro_sprite_renderer_mrb_draw(mrb_state* mrb, mrb_value self) {
   struct hiro_sprite_renderer* renderer;
   SDL_Rect distance;
+  mrb_int width, height;
+
+  width = mrb_fixnum(mrb_funcall(mrb, self, "width", 0, NULL));
+  height = mrb_fixnum(mrb_funcall(mrb, self, "height", 0, NULL));
 
   renderer = hiro_sprite_renderer_ptr(mrb, r_iv_get("@data"));
   distance.x = mrb_fixnum(mrb_funcall(mrb, self, "x", 0, NULL));
   distance.y = mrb_fixnum(mrb_funcall(mrb, self, "y", 0, NULL));
-  distance.w = renderer->width;
-  distance.h = renderer->height;
+  distance.w = width > 0 ? width: renderer->width;
+  distance.h = height > 0 ? height : renderer->height;
 
   SDL_RenderCopy(renderer->renderer, renderer->texture, NULL, &distance);
 

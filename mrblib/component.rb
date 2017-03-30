@@ -4,6 +4,11 @@ class Component
 
   def initialize
     @game_object = nil
+    puts name
+  end
+
+  def name
+    self.class.to_s.underscore.to_sym
   end
 
   def init; end
