@@ -24,5 +24,6 @@ void hiro_component_init(mrb_state* mrb) {
 
   component = mrb_define_class(mrb, "Component", mrb->object_class);
 
-  hiro_sprite_renderer_init(mrb, component);
+  HIRO_COMP_INIT(sprite_renderer);
+  HIRO_COMP_INIT(animator);
 }

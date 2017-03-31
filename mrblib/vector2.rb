@@ -14,6 +14,10 @@ class Vector2
     "(#{@x}, #{@y})"
   end
 
+  def to_a
+    [@x, @y]
+  end
+
   def +(other)
     operate(:+, other)
   end

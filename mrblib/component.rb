@@ -15,4 +15,8 @@ class Component
   def update(ticks); end
 
   def draw; end
+
+  def parent
+    game_object.parent
+  end
 end

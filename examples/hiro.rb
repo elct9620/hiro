@@ -8,11 +8,12 @@ class ExampleGame < Game
   end
 end
 
-class GamePad < GameObject
+class Misaki < GameObject
   def initialize
     super
 
-    use SpriteRenderer.new("examples/gamepad.png")
+    use SpriteRenderer.new('examples/Misaki.png')
+    use Animator.new(48, 56)
   end
 end
 
@@ -20,14 +21,18 @@ class ExampleScene < Scene
   def initialize
     super
 
-    @gamepad = GamePad.new
-    @gamepad2 = GamePad.new
-    @gamepad2.x = 100
-    @gamepad.add @gamepad2
-    add @gamepad
-
-    @gamepad2.sprite_renderer.clip = true
-    @gamepad2.sprite_renderer.bound = Rectangle.new(0, 0, 50, 50)
+    @misaki = Misaki.new
+    @misaki.animator
+           .set(:idle, [*3..6])
+           .set(:walk, [*25..30])
+           .set(:run, [*13..20])
+           .set(:jump_up, [*10..12])
+           .set(:jump_fall, [*7..9])
+           .set(:turn, [*21..24])
+           .set(:blink, [*0..2])
+    @misaki.animator.fps = 6
+    @misaki.animator.to(:walk)
+    add @misaki
 
     Event.on :keydown do |data|
       case data[:key]

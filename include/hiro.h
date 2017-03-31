@@ -14,6 +14,7 @@
 
 // Macros
 #define HIRO_INIT(module) hiro_##module##_init(mrb)
+#define HIRO_COMP_INIT(name) hiro_##name##_init(mrb, component)
 
 // Hiro
 #include "wrapper.h"
@@ -32,3 +33,4 @@
 #include "scene.h"
 #include "component.h"
 #include "components/sprite_renderer.h"
+#include "components/animator.h"
