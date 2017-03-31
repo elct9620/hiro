@@ -36,8 +36,9 @@ class ExampleScene < Scene
 
     Event.on :keydown do |data|
       case data[:key]
-      when Keyboard::LEFT then @gamepad.x -= 5
-      when Keyboard::RIGHT then @gamepad.x += 5
+      when Keyboard::LEFT then @misaki.x -= 5
+      when Keyboard::RIGHT then @misaki.x += 5
+      when Keyboard::UP then @misaki.animator.to(:jump_up, true).and_to(:jump_fall)
       end
     end
   end

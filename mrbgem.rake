@@ -37,6 +37,7 @@ MRuby::Gem::Specification.new('hiro') do |spec|
   spec.add_dependency('mruby-string-ext', core: 'mruby-string-ext')
   spec.add_dependency('mruby-object-ext', core: 'mruby-object-ext')
   spec.add_dependency('mruby-hash-ext', core: 'mruby-hash-ext')
+  spec.add_dependency('mruby-numeric-ext', core: 'mruby-numeric-ext')
 
   spec.add_dependency('mruby-onig-regexp', github: 'mattn/mruby-onig-regexp')
 end

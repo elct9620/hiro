@@ -1,14 +1,23 @@
 # Animator Component
 class Animator < Component
   attr_accessor :fps
-  attr_reader :frames
+  attr_reader :frames, :current
 
   def initialize(width, height, frames = 0)
     super()
     @width = width
     @height = height
+    init_state
     init_ticks
     init_frame(frames)
+  end
+
+  def init_state
+    # TODO: Use state machine to manage
+    @playing = true
+    @once = false
+    @loop = 0
+    @last = nil
   end
 
   def init_ticks
@@ -23,9 +32,11 @@ class Animator < Component
     @frame = 0
     @keyframes = {}
     @current = nil
+    @queue = []
   end
 
   def update(ticks)
+    return unless @playing
     return if renderer.nil?
     return if @next_tick > ticks
     force_renderer_use_clip_mode
@@ -63,11 +74,32 @@ class Animator < Component
     self
   end
 
-  def to(name)
-    name = name.to_sym
-    return unless @keyframes.key?(name)
+  def to_animation(name)
     @current = name
     @frame = 0
+    @loop = 0
+  end
+
+  def to(name, once = false)
+    name = name.to_sym
+    return unless @keyframes.key?(name)
+    to_animation(name)
+    @once = once
+    @last = @current unless @once
+    self
+  end
+
+  def to_queue(name)
+    name = name.to_sym
+    return unless @keyframes.key?(name)
+    to_animation(name)
+    @once = true
+    self
+  end
+
+  def and_to(name)
+    @last = @current unless @once
+    @queue << name.to_sym
     self
   end
 
@@ -83,7 +115,22 @@ class Animator < Component
 
   def update_frame
     @frame = (@frame + 1) % keyframes.size
+    # TODO: @frame.zero? ( 1.2.0 not support )
+    @loop += 1 unless @frame > 0
     renderer.bound = create_bound
+    back_last_animation if @loop > 0 && @once
+  end
+
+  def back_last_animation
+    if @queue.empty?
+      to(@last) unless @last.nil?
+    else
+      to_queue(@queue.shift)
+    end
+  end
+
+  def stop
+    @playing = false
   end
 
   def fps=(speed)
