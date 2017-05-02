@@ -28,9 +28,32 @@ char* dirname(const char *path) {
   return dir;
 }
 
+char* clear_path_dots(const char* filename) {
+  size_t len, cut_size;
+  char* new_name;
+
+  cut_size = 1;
+  len = strlen(filename);
+  while(*filename == '.') {
+    cut_size++;
+    filename++;
+  }
+
+  new_name = (char *)malloc(len - cut_size);
+  strncpy(new_name, filename + 1, len - cut_size + 1);
+  return new_name;
+}
+
 char* relative_path(const char* dir, const char* filename) {
   size_t len, dir_len, filename_len;
   char* fullpath;
+
+  int relative_to_up = (filename[0] == '.' && filename[1] == '.');
+  int relative_current = (filename[0] == '.' && filename[1] == '/');
+
+  if(relative_to_up || relative_current) {
+    return relative_path(dirname(dir), clear_path_dots(filename));
+  }
 
   dir_len = strlen(dir);
   filename_len = strlen(filename);
@@ -92,6 +115,15 @@ int has_error(mrb_state* mrb) {
   return 0;
 }
 
+mrb_value mrb_init_load_path(mrb_state* mrb, const char* root, const char* execute) {
+  const char* path;
+  path = dirname(relative_path(root, execute));
+  mrb_value paths = mrb_ary_new(mrb);
+  mrb_ary_push(mrb, paths, mrb_str_new_cstr(mrb, root));
+  mrb_ary_push(mrb, paths, mrb_str_new_cstr(mrb, path));
+  return paths;
+}
+
 int main(int argc, char** argv) {
   char* root = dirname(argv[0]);
 
@@ -102,6 +134,7 @@ int main(int argc, char** argv) {
   mrb_state* mrb = mrb_open();
 
   define_argument_const(mrb, argc, argv);
+  mrb_gv_set(mrb, mrb_intern_cstr(mrb, "$:"), mrb_init_load_path(mrb, root, argv[1]));
 
   execute(mrb, root, argv[1]);
 
