@@ -1,3 +1,4 @@
+# Vector2
 class Vector2
   # TODO: Implement compare detail
   include Comparable
@@ -7,6 +8,14 @@ class Vector2
   def initialize(x = 0, y = 0)
     @x = x
     @y = y
+  end
+
+  def to_s
+    "(#{@x}, #{@y})"
+  end
+
+  def to_a
+    [@x, @y]
   end
 
   def +(other)
@@ -26,18 +35,22 @@ class Vector2
   end
 
   def operate(method, other)
-    return self unless [:+, :-, :*, :/].include?(method.to_sym)
+    return self unless %i(+ - * /).include?(method.to_sym)
     case other
-    when Vector2
-      _x = @x.send(method, other.x)
-      _y = @y.send(method, other.y)
-    when Fixnum, Float, Integer
-      _x = @x.send(method, other)
-      _y = @y.send(method, other)
+    when Vector2 then x, y = operate_with_vec2(method, other)
+    when Float, Integer then x, y = operate_with_number(method, other)
     else
-      _x = 0
-      _y = 0
+      x = @x
+      y = @y
     end
-    Vector2.new(_x, _y)
+    Vector2.new(x, y)
+  end
+
+  def operate_with_vec2(method, other)
+    [@x.send(method, other.x), @y.send(method, other.y)]
+  end
+
+  def operate_with_number(method, other)
+    [@x.send(method, other), @y.send(method, other)]
   end
 end

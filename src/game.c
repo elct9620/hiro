@@ -1,164 +1,158 @@
 #include "game.h"
 
-const struct mrb_data_type hiro_game_type = { "Game", hiro_game_mrb_free };
-
-mrb_value hiro_game_get_current_scene(mrb_state* mrb, mrb_value self) {
-  // TODO: Add some protect method
-  return mrb_iv_get(mrb, self, mrb_intern_lit(mrb, "current_scene"));
+mrb_value hiro_game_object(mrb_state* mrb, struct hiro_game *ptr) {
+  return hiro_data_wrap(game, ptr);
 }
 
-mrb_value hiro_game_mrb_initialize(mrb_state* mrb, mrb_value self) {
+struct hiro_game* hiro_game_ptr(mrb_state* mrb, mrb_value self) {
+  struct hiro_game *game;
+  hiro_data_get(self, game, game);
+  return game;
+}
+
+// TODO: Provide create options
+struct hiro_game* hiro_create_game(mrb_state* mrb) {
   struct hiro_game* game;
-  struct RClass* default_scene;
-  mrb_value window, renderer, current_scene;
+  SDL_Window* window;
+  SDL_Renderer* renderer;
 
-  game = (struct hiro_game*)DATA_PTR(self);
-  if(game != NULL) {
-    hiro_game_mrb_free(mrb, game);
+  const char* name;
+  mrb_int width, height;
+
+  name = mrb_str_to_cstr(mrb, hiro_config_get("title"));
+  width = mrb_fixnum(hiro_config_get("width"));
+  height = mrb_fixnum(hiro_config_get("height"));
+
+  // Create Window
+  // TODO: Read from params or config
+  window = SDL_CreateWindow(name, 0, 0, width, height, SDL_WINDOW_SHOWN);
+  if(!window) {
+    SDL_DestroyWindow(window);
+    mrb_raisef(mrb, E_RUNTIME_ERROR, "Window initialize failed!");
   }
-  mrb_data_init(self, NULL, &hiro_game_type);
 
-  window = hiro_game_create_default_window(mrb);
-  renderer = hiro_game_create_default_renderer(mrb, window);
-  default_scene = mrb_class_ptr(hiro_config_get(mrb, mrb_intern_lit(mrb, "default_scene")));
+  // Create Renderer
+  renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+  if(!renderer) {
+    SDL_DestroyWindow(window);
+    SDL_DestroyRenderer(renderer);
+    mrb_raisef(mrb, E_RUNTIME_ERROR, "Renderer initialize failed!");
+  }
 
-  mrb_gc_register(mrb, window);
-  mrb_gc_register(mrb, renderer);
-
-  // TODO: Implement full `hiro_game` creation method
   game = (struct hiro_game*)mrb_malloc(mrb, sizeof(struct hiro_game));
   game->stop = 0;
   game->window = window;
   game->renderer = renderer;
 
-  mrb_data_init(self, game, &hiro_game_type);
+  return game;
+}
 
-  hiro_set_instance(mrb, self);
+void hiro_game_draw(mrb_state* mrb, mrb_value self) {
+  hiro_scene_draw(mrb, r_iv_get("@current_scene"), 0, NULL);
+  mrb_funcall(mrb, self, "draw", 0);
+}
 
-  current_scene = mrb_obj_new(mrb, default_scene, 0, NULL);
+void hiro_game_update(mrb_state* mrb, mrb_value self, mrb_int ticks) {
+  mrb_value argv[1];
 
-  mrb_iv_set(mrb, self, mrb_intern_lit(mrb, "current_scene"), current_scene);
+  argv[0] = mrb_fixnum_value(ticks);
+  hiro_scene_update(mrb, r_iv_get("@current_scene"), 1, argv);
+  mrb_funcall_argv(mrb, self, mrb_intern_lit(mrb, "update"), 1, argv);
+}
+
+void hiro_game_poll_event(mrb_state* mrb, mrb_value self) {
+  SDL_Event event;
+  while(SDL_PollEvent(&event)) {
+    hiro_event_emit(mrb, event);
+  }
+}
+
+mrb_value hiro_game_current_scene(mrb_state* mrb, mrb_value self) {
+  struct RClass* scene;
+  mrb_value scene_object;
+
+  scene_object = r_iv_get("@current_scene");
+  if(!mrb_nil_p(scene_object)) {
+    return scene_object;
+  }
+
+  scene = mrb_class_ptr(hiro_config_get("default_scene"));
+  scene_object = mrb_obj_new(mrb, scene, 0, NULL);
+  return scene_object;
+}
+
+void hiro_game_instance_set(mrb_state* mrb, mrb_value instance) {
+  struct RClass* game;
+
+  game = mrb_class_get(mrb, "Game");
+  mrb_mod_cv_set(mrb, game, mrb_intern_lit(mrb, "@@instance"), instance);
+}
+
+mrb_value hiro_game_instance_get(mrb_state* mrb) {
+  struct RClass* game;
+
+  game = mrb_class_get(mrb, "Game");
+  return mrb_mod_cv_get(mrb, game, mrb_intern_lit(mrb, "@@instance"));
+}
+
+mrb_value hiro_game_mrb_init(mrb_state* mrb, mrb_value self) {
+  struct hiro_game* game;
+
+  game = hiro_create_game(mrb);
+  r_iv_set("@data", hiro_game_object(mrb, game));
 
   return self;
 }
 
 mrb_value hiro_game_mrb_start(mrb_state* mrb, mrb_value self) {
   struct hiro_game* game;
-  mrb_value cb;
-  SDL_Event ev;
 
-  SDL_Renderer* renderer;
+  // TODO: Find default scene
+  r_iv_set("@current_scene", hiro_game_current_scene(mrb, self));
+
+  game = hiro_game_ptr(mrb, r_iv_get("@data"));
 
   // TODO: Set FPS from Ruby
   mrb_int FPS = 60;
-  mrb_int FIXED_TICKS = ceil(1000/FPS); // Milliseconds
+  mrb_int FIXED_TICKS =ceil(1000 / FPS); // Milliseconds
 
   mrb_int current_ticks = SDL_GetTicks();
   mrb_int next_update_ticks = current_ticks + FIXED_TICKS;
 
-  game = DATA_GET_PTR(mrb, self, &hiro_game_type, struct hiro_game);
-  renderer = hiro_game_default_renderer(mrb, self);
-
-  mrb_get_args(mrb, "|&", &cb);
-
   while(!game->stop) {
     current_ticks = SDL_GetTicks();
-    // TODO: Implement Game Instance related methods
-    while(SDL_PollEvent(&ev)) {
-      hiro_event_call(mrb, ev);
-    }
 
-    mrb_funcall(mrb, self, "update", 1, mrb_fixnum_value(current_ticks));
+    hiro_game_poll_event(mrb, self);
+    hiro_game_update(mrb, self, current_ticks);
 
-    // TODO: Split render and actions controller
     if(current_ticks > next_update_ticks) {
-      next_update_ticks += FIXED_TICKS;
+      // TODO: Make sure update ticks not overflow
+      next_update_ticks = current_ticks + FIXED_TICKS;
 
-      SDL_RenderClear(renderer);
-      mrb_funcall(mrb, self, "draw", 0);
-      SDL_RenderPresent(renderer);
+      SDL_RenderClear(game->renderer);
+      hiro_game_draw(mrb, self);
+      SDL_RenderPresent(game->renderer);
     }
   }
 
   return self;
 }
 
-mrb_value hiro_game_mrb_draw(mrb_state* mrb, mrb_value self) {
-  mrb_value current_scene;
-  current_scene = hiro_game_get_current_scene(mrb, self);
-  hiro_scene_draw(mrb, current_scene);
-  return self;
-}
-
-mrb_value hiro_game_mrb_update(mrb_state* mrb, mrb_value self) {
-  // TODO: Move into game start
-  mrb_value current_scene;
-  mrb_int argc, ticks;
-  argc = mrb_get_args(mrb, "i", &ticks);
-
-  ticks = argc > 0 ? ticks : 0;
-  current_scene = hiro_game_get_current_scene(mrb, self);
-  hiro_scene_update(mrb, current_scene, ticks);
-  return self;
-}
-
 mrb_value hiro_game_mrb_stop_bang(mrb_state* mrb, mrb_value self) {
-  struct hiro_game* game;
+  struct hiro_game *game;
+  game = hiro_game_ptr(mrb, r_iv_get("@data"));
 
-  game = DATA_GET_PTR(mrb, self, &hiro_game_type, struct hiro_game);
   game->stop = 1;
 
   return self;
 }
 
-void hiro_game_mrb_free(mrb_state* mrb, void *ptr) {
-  struct hiro_game* game;
+void hiro_game_init(mrb_state* mrb) {
+  struct RClass* game;
 
-  game = (struct hiro_game*)ptr;
-  if(game) {
-    // TODO: Release game related pointer
-    // mrb_gc_unregister(mrb, game->window);
-    // mrb_gc_unregister(mrb, game->renderer);
-  }
+  game = mrb_define_class(mrb, "Game", mrb->object_class);
 
-  mrb_free(mrb, ptr);
-}
-
-mrb_value hiro_game_create_default_window(mrb_state* mrb) {
-  mrb_value args[3];
-
-  struct RClass* klass = mrb_class_get(mrb, "Window");
-
-  args[0] = hiro_config_get(mrb, mrb_intern_lit(mrb, "name"));
-  args[1] = hiro_config_get(mrb, mrb_intern_lit(mrb, "width"));
-  args[2] = hiro_config_get(mrb, mrb_intern_lit(mrb, "height"));
-
-  return mrb_obj_new(mrb, klass, 3, args);
-}
-
-mrb_value hiro_game_create_default_renderer(mrb_state* mrb, mrb_value window) {
-  mrb_value args[1];
-  args[0] = window;
-
-  struct RClass* klass = mrb_class_get(mrb, "Renderer");
-  return mrb_obj_new(mrb, klass, 1, args);
-}
-
-SDL_Renderer* hiro_game_default_renderer(mrb_state* mrb, mrb_value self) {
-  struct hiro_game* game;
-  game = DATA_GET_PTR(mrb, self, &hiro_game_type, struct hiro_game);
-  return hiro_renderer_get_ptr(mrb, game->renderer);
-}
-
-void hiro_define_game(mrb_state *mrb) {
-  struct RClass* klass;
-  klass = mrb_define_class(mrb, "Game", mrb->object_class);
-
-  MRB_SET_INSTANCE_TT(klass, MRB_TT_DATA);
-
-  mrb_define_method(mrb, klass, "initialize", hiro_game_mrb_initialize, MRB_ARGS_NONE());
-  mrb_define_method(mrb, klass, "update", hiro_game_mrb_update, MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, klass, "draw", hiro_game_mrb_draw, MRB_ARGS_NONE());
-  mrb_define_method(mrb, klass, "start", hiro_game_mrb_start, MRB_ARGS_BLOCK());
-  mrb_define_method(mrb, klass, "stop!", hiro_game_mrb_stop_bang, MRB_ARGS_NONE());
+  mrb_define_method(mrb, game, "init", hiro_game_mrb_init, MRB_ARGS_NONE());
+  mrb_define_method(mrb, game, "start", hiro_game_mrb_start, MRB_ARGS_NONE());
+  mrb_define_method(mrb, game, "stop!", hiro_game_mrb_stop_bang, MRB_ARGS_NONE());
 }

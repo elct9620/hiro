@@ -105,18 +105,11 @@ int main(int argc, char** argv) {
 
   execute(mrb, root, argv[1]);
 
+  // TODO: Close game when ruby raise error
   if(has_error(mrb)) {
-    return 1;
-  }
-
-  // Boot Game
-  struct RClass* hiro = mrb_module_get(mrb, "Hiro");
-  mrb_value _entrypoint = mrb_mod_cv_get(mrb, hiro, mrb_intern_lit(mrb, "entrypoint"));
-  struct RClass* entrypoint = mrb_class_ptr(_entrypoint);
-  mrb_value instance = mrb_obj_new(mrb, entrypoint, 0, NULL);
-  mrb_funcall(mrb, instance, "start", 0);
-
-  if(has_error(mrb)) {
+    free(root);
+    mrb_close(mrb);
+    SDL_Quit();
     return 1;
   }
 

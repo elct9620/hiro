@@ -1,27 +1,42 @@
+# Game Object
 class GameObject
   attr_accessor :position
+  attr_reader :parent, :scale
+
+  def initialize
+    @parent = nil
+    @children = []
+    @components = {}
+    @position = Vector2.new(0, 0)
+    @scale = Vector2.new(1, 1)
+  end
 
   def x
-    # TODO: Set default position
-    @position ||= Vector2.new(0, 0)
-    return @parent.x + @position.x if @parent
     @position.x
   end
 
   def x=(x)
-    # TODO: Fix position invalid when use -= operator
-    @position ||= Vector2.new(0, 0)
     @position.x = x
   end
 
   def y
-    @position ||= Vector2.new(0, 0)
-    return @parent.y + @position.y if @parent
     @position.y
   end
 
   def y=(y)
-    @position ||= Vector2.new(0, 0)
     @position.y = y
+  end
+
+  def update(ticks); end
+
+  def draw; end
+
+  def respond_to_missing?(name)
+    super
+  end
+
+  def method_missing(name, *args, &block)
+    return @components[name] if @components.has_key?(name)
+    super
   end
 end
